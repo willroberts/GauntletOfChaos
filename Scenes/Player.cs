@@ -1,10 +1,11 @@
 using Godot;
 
+[GlobalClass]
 public partial class Player : Unit, IOccupant
 {
     private readonly Grid _grid = ResourceLoader.Load("res://Resources/Grid.tres") as Grid;
     private Vector2I _cell = Vector2I.Zero;
-    private readonly Texture2D _texture;
+    private Texture2D _texture;
     private bool _isInCombat = false;
 
     public Player(Vector2I cell, Texture2D texture) : base(cell, texture)

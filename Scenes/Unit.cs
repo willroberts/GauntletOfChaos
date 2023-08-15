@@ -18,13 +18,15 @@ public partial class Unit : Node2D, IOccupant
     {
         Position = _grid.GridToScreen(GetCell());
 
-        if (_texture == null) { return; }
-        AddChild(new Sprite2D()
+        if (_texture != null)
         {
-            Texture = _texture,
-            ZIndex = 1,
-            Scale = new Vector2(0.5F, 0.5F)
-        });
+            AddChild(new Sprite2D()
+            {
+                Texture = _texture,
+                ZIndex = 1,
+                Scale = new Vector2(0.5F, 0.5F)
+            });
+        }
     }
 
     // Defining these methods implements the IOccupant interface.
