@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="Grid" load_steps=2 format=3 uid="uid://dxklb16r0i2du"]
+
+[ext_resource type="Script" path="res://Plugins/grid-engine/Resources/Grid.cs" id="1_ruj24"]
+
+[resource]
+script = ExtResource("1_ruj24")
+Size = Vector2i(20, 12)
+CellSize = Vector2i(64, 64)
