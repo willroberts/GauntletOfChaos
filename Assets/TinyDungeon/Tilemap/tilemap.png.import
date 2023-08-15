@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ckk8v8hjckr18"
-path="res://.godot/imported/tilemap.png-8873011454e187bdee79e5852707d1fa.ctex"
+path="res://.godot/imported/tilemap.png-b7147ca3047280e5b73e1383250d0f4b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Sprites/Tiny Dungeon/Tilemap/tilemap.png"
-dest_files=["res://.godot/imported/tilemap.png-8873011454e187bdee79e5852707d1fa.ctex"]
+source_file="res://Assets/TinyDungeon/Tilemap/tilemap.png"
+dest_files=["res://.godot/imported/tilemap.png-b7147ca3047280e5b73e1383250d0f4b.ctex"]
 
 [params]
 
