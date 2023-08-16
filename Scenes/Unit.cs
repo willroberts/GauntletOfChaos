@@ -24,6 +24,7 @@ public partial class Unit : Node2D, IOccupant
             {
                 Texture = _texture,
                 ZIndex = 1,
+                TextureFilter = TextureFilterEnum.Nearest,
                 Scale = new(4F, 4F)
             });
         }
