@@ -24,7 +24,7 @@ public partial class Unit : Node2D, IOccupant
             {
                 Texture = _texture,
                 ZIndex = 1,
-                Scale = new Vector2(0.5F, 0.5F)
+                Scale = new(4F, 4F)
             });
         }
     }

@@ -14,12 +14,6 @@ public partial class Player : Unit, IOccupant
         _texture = texture;
     }
 
-    public override void _Ready()
-    {
-        base._Ready();
-        GD.Print("Spawned a player.");
-    }
-
     public override int GetRange()
     {
         if (_isInCombat) { return 3; }
