@@ -18,7 +18,15 @@ public partial class Main : Node2D
 
 	public override void _Ready()
 	{
-		_unitLayer.HighlightTiles = HighlightTiles;
+		if (GetChild<TileMap>(0).Name == "Town")
+		{
+			_unitLayer.HighlightTiles = null;
+		}
+		else
+		{
+			_unitLayer.HighlightTiles = HighlightTiles;
+		}
+
 		_unitLayer.PathTiles = PathTiles;
 		_gameboard.AddLayer("units", _unitLayer);
 
