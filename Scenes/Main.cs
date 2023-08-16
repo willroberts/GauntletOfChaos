@@ -1,3 +1,4 @@
+using System.IO.Pipes;
 using Godot;
 
 public partial class Main : Node2D
@@ -11,6 +12,7 @@ public partial class Main : Node2D
 	private Grid _grid = ResourceLoader.Load("res://Resources/Grid.tres") as Grid;
 	private readonly Board _gameboard = new();
 	private readonly BoardLayer _unitLayer = new();
+	private TileMap _currentLevel;
 	private Vector2I _hoveredCell = Vector2I.Zero;
 
 	// FIXME: Move this.
@@ -18,25 +20,21 @@ public partial class Main : Node2D
 
 	public override void _Ready()
 	{
-		if (GetChild<TileMap>(0).Name == "Town")
-		{
-			_unitLayer.HighlightTiles = null;
-		}
-		else
-		{
-			_unitLayer.HighlightTiles = HighlightTiles;
-		}
+		_currentLevel = GetChild<TileMap>(0);
+		if (_currentLevel.Name == "Town") { HighlightTiles = null; }
+		_unitLayer.HighlightTiles = HighlightTiles;
 
 		_unitLayer.PathTiles = PathTiles;
 		_gameboard.AddLayer("units", _unitLayer);
 
+		RegisterNPCs();
 		SpawnPlayer();
 	}
 
 	private void SpawnPlayer()
 	{
 		Vector2I startPosition;
-		if (GetChild<TileMap>(0).Name == "Town") { startPosition = new(9, 4); }
+		if (_currentLevel.Name == "Town") { startPosition = new(9, 4); }
 		else { startPosition = new(1, 1); }
 
 		Texture2D tex = ResourceLoader.Load(_playerTexture) as Texture2D;
@@ -46,12 +44,27 @@ public partial class Main : Node2D
 		AddChild(player);
 	}
 
+	private void RegisterNPCs()
+	{
+		if (_currentLevel.Name != "Town") { return; }
+		Town town = _currentLevel as Town;
+
+		foreach (Vector2I cell in town.GetNPCLocations())
+		{
+			Unit npc = null;
+			GD.Print("Adding NPC to ", cell);
+			_unitLayer.Add(npc, cell);
+		}
+	}
+
 	public override void _Input(InputEvent @event)
 	{
 		// Handle mouse click / touch.
 		if (@event is InputEventMouseButton btn && btn.ButtonIndex == MouseButton.Left && btn.Pressed)
 		{
-			_unitLayer.HandleClick(_grid.ScreenToGrid(btn.Position));
+			Vector2I target = _grid.ScreenToGrid(btn.Position);
+			GD.Print("Clicked on ", target);
+			_unitLayer.HandleClick(target);
 			GetViewport().SetInputAsHandled();
 			return;
 		}
