@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://di60kc62f2jdw"]
-
-[ext_resource type="Script" path="res://Scenes/DebugGrid.cs" id="1_mwqj3"]
-
-[node name="DebugGrid" type="Node2D"]
-script = ExtResource("1_mwqj3")
