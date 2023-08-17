@@ -24,7 +24,7 @@ public partial class Main : Node2D
     private Grid _grid = ResourceLoader.Load("res://Resources/Grid.tres") as Grid;
     private readonly Board _gameboard = new();
     private readonly BoardLayer _unitLayer = new();
-    private LevelManager _levelManager = new();
+    private Level _currentLevel;
     private Vector2I _hoveredCell = Vector2I.Zero;
     private readonly string _dungeonSelectScene = "res://Scenes/UI/DungeonSelect.tscn";
     private DungeonSelect _dungeonSelectMenu;
@@ -40,7 +40,7 @@ public partial class Main : Node2D
     {
         ConfigureHighlightTiles();
         ConfigurePathTiles();
-        ConfigureLevelManagerAndLoad();
+        ConfigureAndLoadLevel();
         ConfigureBoard();
         ConfigureHUD();
         GD.Print("Ready!");
@@ -74,15 +74,34 @@ public partial class Main : Node2D
 	* Signal handlers.
 	*/
 
-    private void OnGatewayEntered()
+    private void OnPlayerMoved(Vector2I cell)
     {
-        _dungeonSelectMenu.Visible = true;
+        // Show the dungeon select menu when a gateway tile is entered.
+        if (_currentLevel.GetGatewayTiles().Contains(cell))
+        {
+            _dungeonSelectMenu.Visible = true;
+        }
     }
 
     private void OnDungeonSelected(Level targetLevel)
     {
         GD.Print("Dungeon selected: ", targetLevel.Name);
         _dungeonSelectMenu.Visible = false;
+        ChangeLevel(targetLevel);
+    }
+
+    /*
+    * Scene engine.
+    */
+
+    private void ChangeLevel(Level targetLevel)
+    {
+        RemoveChild(_currentLevel);
+
+        _currentLevel = targetLevel;
+        _currentLevel.ZIndex = (int)ZOrder.Level;
+        _currentLevel.Initialize();
+        AddChild(_currentLevel);
     }
 
     /*
@@ -112,20 +131,12 @@ public partial class Main : Node2D
 
     // LevelManager is responsible for initializing and changing levels.
     // It emits the GatewayEntered signal when the player steps on a Gateway tile.
-    private void ConfigureLevelManagerAndLoad()
+    private void ConfigureAndLoadLevel()
     {
-        // Handle the LevelManager's GatewayEntered signal.
-        _levelManager.GatewayEntered += OnGatewayEntered;
-
-        // LevelManager intercepts the OnMoved signal to check whether or not
-        // the player has entered a Gateway tile.
-        _unitLayer.MoveFinished += _levelManager.OnMoved;
+        _unitLayer.MoveFinished += OnPlayerMoved;
 
         // Load the initial scene.
-        Town townLevel = InitialLevel.Instantiate() as Town;
-        townLevel.ZIndex = (int)ZOrder.Level;
-        AddChild(townLevel);
-        _levelManager.Load(townLevel);
+        ChangeLevel(InitialLevel.Instantiate() as Level);
     }
 
     private void ConfigureBoard()
@@ -133,20 +144,20 @@ public partial class Main : Node2D
         _gameboard.AddLayer("units", _unitLayer);
 
         // Mark non-navigable tiles as terrain.
-        foreach (Vector2I cell in _levelManager.CurrentLevel().GetTerrainTiles())
+        foreach (Vector2I cell in _currentLevel.GetTerrainTiles())
         {
             _unitLayer.Add(new Terrain(cell), cell);
         }
 
         // If the current level has NPCs, load them.
-        foreach (Vector2I cell in _levelManager.CurrentLevel().GetNPCTiles())
+        foreach (Vector2I cell in _currentLevel.GetNPCTiles())
         {
             _unitLayer.Add(new NPC(cell), cell);
         }
 
         // Spawn the player.
         Texture2D tex = ResourceLoader.Load(_playerTexture) as Texture2D;
-        Player player = new(_levelManager.CurrentLevel().GetPlayerStart(), tex);
+        Player player = new(_currentLevel.GetPlayerStart(), tex);
         _unitLayer.MoveFinished += player.OnMoved;
         _unitLayer.Add(player, player.GetCell());
         AddChild(player);
@@ -165,6 +176,9 @@ public partial class Main : Node2D
         tutorialLevel.ZIndex = (int)ZOrder.Level;
         _dungeonSelectMenu.SetButtonValue(0, "Tutorial Dungeon", tutorialLevel);
         _dungeonSelectMenu.DungeonSelected += OnDungeonSelected;
+
+        // Subscribe to movement-based HUD events.
+        _unitLayer.MoveFinished += OnPlayerMoved;
 
         // Start in a hidden state.
         _dungeonSelectMenu.Visible = false;
