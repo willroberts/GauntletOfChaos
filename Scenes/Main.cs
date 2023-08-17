@@ -19,6 +19,20 @@ public partial class Main : Node2D
 
 	public override void _Ready()
 	{
+		var nextLevel = GD.Load("res://Levels/Town.tscn");
+
+		/*
+		# Remove the current level
+		var level = root.get_node("Level")
+		root.remove_child(level)
+		level.call_deferred("free")
+
+		# Add the next level
+		var next_level_resource = load("res://path/to/scene.tscn)
+		var next_level = next_level_resource.instance()
+		root.add_child(next_level)
+		*/
+
 		// Load the initial town level.
 		Town townLevel = new();
 		AddChild(townLevel);

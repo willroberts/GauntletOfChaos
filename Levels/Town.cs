@@ -1,10 +1,5 @@
 public partial class Town : Level
 {
-	public override void _Ready()
-	{
-		//Initialize();
-	}
-
 	public override void Initialize()
 	{
 		SetPlayerStart(new(9, 4));

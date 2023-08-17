@@ -17,6 +17,11 @@ public partial class LevelManager : Node2D
     public virtual void OnMoved(Vector2I newCell)
     {
         if (!_currentLevel.GetGatewayTiles().Contains(newCell)) { return; }
-        GD.Print("Player entered a gateway!");
+        ShowGatewayUI();
+    }
+
+    public void ShowGatewayUI()
+    {
+        GD.Print("Showing gateway UI");
     }
 }
