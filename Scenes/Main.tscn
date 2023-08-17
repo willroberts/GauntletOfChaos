@@ -1,7 +1,6 @@
-[gd_scene load_steps=9 format=3 uid="uid://dpxuu6425frma"]
+[gd_scene load_steps=8 format=3 uid="uid://dpxuu6425frma"]
 
 [ext_resource type="Script" path="res://Scenes/Main.cs" id="1_e3874"]
-[ext_resource type="PackedScene" uid="uid://k7ugey4lxocb" path="res://Scenes/HUD.tscn" id="2_imu15"]
 [ext_resource type="Texture2D" uid="uid://3t6xprdo26aw" path="res://Assets/FirstParty/highlightTiles.png" id="4_tv5o7"]
 [ext_resource type="Texture2D" uid="uid://bhp0kga0yjioh" path="res://Assets/FirstParty/pathTiles.png" id="5_234tl"]
 
@@ -75,8 +74,6 @@ sources/0 = SubResource("TileSetAtlasSource_xjdn3")
 script = ExtResource("1_e3874")
 HighlightTiles = NodePath("HighlightTiles")
 PathTiles = NodePath("PathTiles")
-
-[node name="HUD" parent="." instance=ExtResource("2_imu15")]
 
 [node name="HighlightTiles" type="TileMap" parent="."]
 texture_filter = 1

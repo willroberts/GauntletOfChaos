@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://prrguyaoorsr"]
+
+[sub_resource type="CSharpScript" id="CSharpScript_ksqys"]
+script/source = "using Godot;
+
+public partial class HUD : Node2D
+{
+
+}"
+
+[node name="HUD" type="Node2D"]
+script = SubResource("CSharpScript_ksqys")
