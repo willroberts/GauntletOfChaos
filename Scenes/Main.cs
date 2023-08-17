@@ -22,7 +22,6 @@ public partial class Main : Node2D
 	*/
 
     private Grid _grid = ResourceLoader.Load("res://Resources/Grid.tres") as Grid;
-    private readonly Board _gameboard = new();
     private readonly BoardLayer _unitLayer = new();
     private Level _currentLevel;
     private Vector2I _hoveredCell = Vector2I.Zero;
@@ -46,12 +45,11 @@ public partial class Main : Node2D
         // Spawn the player.
         Texture2D tex = ResourceLoader.Load(_playerTexture) as Texture2D;
         _player = new(_currentLevel.GetPlayerStart(), tex);
-        ResetPlayerPosition();
+        //ResetPlayerPosition();
         _unitLayer.MoveFinished += _player.OnMoved;
         _unitLayer.Add(_player, _player.GetCell());
         AddChild(_player);
 
-        ConfigureBoard();
         ConfigureHUD();
         GD.Print("Ready!");
     }
@@ -95,7 +93,6 @@ public partial class Main : Node2D
 
     private void OnDungeonSelected(Level targetLevel)
     {
-        GD.Print("Dungeon selected: ", targetLevel.Name);
         _dungeonSelectMenu.Visible = false;
         ChangeLevel(targetLevel);
     }
@@ -110,7 +107,9 @@ public partial class Main : Node2D
 
         _currentLevel = targetLevel;
         _currentLevel.ZIndex = (int)ZOrder.Level;
+        _unitLayer.Clear();
         _currentLevel.Initialize();
+        InitializeBoard();
         AddChild(_currentLevel);
     }
 
@@ -145,10 +144,8 @@ public partial class Main : Node2D
         }
     }
 
-    private void ConfigureBoard()
+    private void InitializeBoard()
     {
-        _gameboard.AddLayer("units", _unitLayer);
-
         // Mark non-navigable tiles as terrain.
         foreach (Vector2I cell in _currentLevel.GetTerrainTiles())
         {

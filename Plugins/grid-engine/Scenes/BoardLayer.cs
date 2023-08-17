@@ -82,7 +82,7 @@ public partial class BoardLayer : Node2D
     {
         if (IsOccupied(cell))
         {
-            GD.Print("Error: Cell already occupied");
+            GD.Print("Error: Cell ", cell, " already occupied");
             return;
         }
 

@@ -1,3 +1,5 @@
+using Godot;
+
 public partial class Tutorial : Level
 {
     public override void Initialize()
@@ -17,17 +19,19 @@ public partial class Tutorial : Level
 			new(8, 1), new(8, 2), new(11, 1), new(11, 2),
 			// Left wall.
 			new(0, 1), new(0, 2), new(0, 3), new(0, 4), new(0, 5), new(0, 6),
-            new(0, 6), new(0, 7), new(0, 8), new(0, 9), new(0, 10), new(0, 11),
+            new(0, 7), new(0, 8), new(0, 9), new(0, 10), new(0, 11),
 			// Right wall.
 			new(19, 1), new(19, 2), new(19, 3), new(19, 4), new(19, 5), new(19, 6),
-            new(19, 6), new(19, 7), new(19, 8), new(19, 9), new(19, 10), new(19, 11),
+            new(19, 7), new(19, 8), new(19, 9), new(19, 10), new(19, 11),
 			// Bottom wall.
 			new(1, 11), new(2, 11), new(3, 11), new(4, 11), new(5, 11),
             new(6, 11), new(7, 11), new(8, 11), new(9, 11), new(10, 11),
             new(11, 11), new(12, 11), new(13, 11), new(14, 11), new(15, 11),
             new(16, 11), new(17, 11), new(18, 11)
         });
+
+        SetNPCTiles(new());
     }
 
-    public override bool IsTown() { return true; } // FIXME
+    public override bool IsTown() { return false; }
 }
