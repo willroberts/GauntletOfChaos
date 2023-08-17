@@ -1,23 +1,37 @@
+using System.Diagnostics.CodeAnalysis;
 using Godot;
 
-enum ZOrder { Level, Highlight, Items, Path, Units };
+enum ZOrder { Level, Highlight, Items, Path, Units, UI };
 
 public partial class Main : Node2D
 {
+	/*
+	* Public attributes.
+	*/
+
 	[Export]
 	public TileMap HighlightTiles;
 
 	[Export]
 	public TileMap PathTiles;
 
+	/*
+	* Private attributes
+	*/
+
 	private Grid _grid = ResourceLoader.Load("res://Resources/Grid.tres") as Grid;
 	private readonly Board _gameboard = new();
 	private readonly BoardLayer _unitLayer = new();
 	private LevelManager _levelManager = new();
 	private Vector2I _hoveredCell = Vector2I.Zero;
+	private DungeonSelect _dungeonSelectMenu;
 
 	// FIXME: Move this.
 	private readonly string _playerTexture = "Assets/TinyDungeon/Tiles/tile_0097.png";
+
+	/*
+	* Core events.
+	*/
 
 	public override void _Ready()
 	{
@@ -25,8 +39,19 @@ public partial class Main : Node2D
 		Town townLevel = GD.Load<PackedScene>("res://Levels/Town.tscn").Instantiate() as Town;
 		townLevel.ZIndex = (int)ZOrder.Level;
 		AddChild(townLevel);
-		_levelManager.Load(townLevel);
-		_unitLayer.MoveFinished += _levelManager.OnMoved;
+		ConfigureLevelManagerAndLoad(townLevel);
+
+		// Prepare connected levels.
+		Tutorial tutorialLevel = GD.Load<PackedScene>("res://Levels/Tutorial.tscn").Instantiate() as Tutorial;
+		tutorialLevel.ZIndex = (int)ZOrder.Level;
+
+		// Configure and hide the dungeon select menu.
+		PackedScene scn = GD.Load<PackedScene>("res://Scenes/UI/DungeonSelect.tscn");
+		_dungeonSelectMenu = scn.Instantiate() as DungeonSelect;
+		_dungeonSelectMenu.ZIndex = (int)ZOrder.UI;
+		_dungeonSelectMenu.SetButtonValue(0, "Tutorial Dungeon", tutorialLevel);
+		AddChild(_dungeonSelectMenu);
+		_dungeonSelectMenu.Visible = false;
 
 		// Configure movement range highlighting.
 		if (_levelManager.CurrentLevel().IsTown()) { HighlightTiles = null; }
@@ -35,7 +60,6 @@ public partial class Main : Node2D
 			HighlightTiles.ZIndex = (int)ZOrder.Highlight;
 			_unitLayer.HighlightTiles = HighlightTiles;
 		}
-
 
 		// Configure path rendering.
 		if (PathTiles != null)
@@ -46,9 +70,71 @@ public partial class Main : Node2D
 
 		// Populate the grid with occupants.
 		_gameboard.AddLayer("units", _unitLayer);
+		_unitLayer.MoveFinished += _levelManager.OnMoved;
 		RegisterTerrain();
 		RegisterNPCs();
 		SpawnPlayer();
+	}
+
+	public override void _Input(InputEvent @event)
+	{
+		// Handle mouse click / touch.
+		if (@event is InputEventMouseButton btn && btn.ButtonIndex == MouseButton.Left && btn.Pressed)
+		{
+			Vector2I target = _grid.ScreenToGrid(btn.Position);
+			//GD.Print("Clicked on ", target);
+			_unitLayer.HandleClick(target);
+			//GetViewport().SetInputAsHandled();
+			return;
+		}
+
+		// Handle mouse motion.
+		if (@event is InputEventMouseMotion evt)
+		{
+			Vector2I hoveredCell = _grid.Clamp(_grid.ScreenToGrid(evt.Position));
+			if (hoveredCell.Equals(_hoveredCell)) { return; }
+			_hoveredCell = hoveredCell;
+			_unitLayer.HandleHover(_hoveredCell);
+			//GetViewport().SetInputAsHandled();
+			return;
+		}
+	}
+
+	/*
+	* Signal handlers.
+	*/
+
+	private void OnGatewayEntered()
+	{
+		_dungeonSelectMenu.Visible = true;
+	}
+
+	private void OnDungeonSelected()
+	{
+		_dungeonSelectMenu.Visible = false;
+	}
+
+	/*
+	* Configuration helpers.
+	*/
+
+	// LevelManager is responsible for initializing and changing levels.
+	// It emits the GatewayEntered signal when the player steps on a Gateway tile.
+	// CS1061 is reported when Roslyn can't find signal names.
+	[SuppressMessage("Compiler", "CS1061")]
+	private async void ConfigureLevelManagerAndLoad(Level startLevel)
+	{
+		await ToSignal(_unitLayer, "ready");
+
+		// Handle the LevelManager's GatewayEntered signal.
+		_levelManager.GatewayEntered += OnGatewayEntered;
+
+		// LevelManager intercepts the OnMoved signal to check whether or not
+		// the player has entered a Gateway tile.
+		_unitLayer.MoveFinished += _levelManager.OnMoved;
+
+		// Load the initial scene.
+		_levelManager.Load(startLevel);
 	}
 
 	private void SpawnPlayer()
@@ -74,30 +160,6 @@ public partial class Main : Node2D
 		foreach (Vector2I cell in _levelManager.CurrentLevel().GetTerrainTiles())
 		{
 			_unitLayer.Add(new Terrain(cell), cell);
-		}
-	}
-
-	public override void _Input(InputEvent @event)
-	{
-		// Handle mouse click / touch.
-		if (@event is InputEventMouseButton btn && btn.ButtonIndex == MouseButton.Left && btn.Pressed)
-		{
-			Vector2I target = _grid.ScreenToGrid(btn.Position);
-			GD.Print("Clicked on ", target);
-			_unitLayer.HandleClick(target);
-			GetViewport().SetInputAsHandled();
-			return;
-		}
-
-		// Handle mouse motion.
-		if (@event is InputEventMouseMotion evt)
-		{
-			Vector2I hoveredCell = _grid.Clamp(_grid.ScreenToGrid(evt.Position));
-			if (hoveredCell.Equals(_hoveredCell)) { return; }
-			_hoveredCell = hoveredCell;
-			_unitLayer.HandleHover(_hoveredCell);
-			GetViewport().SetInputAsHandled();
-			return;
 		}
 	}
 }
