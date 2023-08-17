@@ -27,6 +27,7 @@ public partial class Main : Node2D
     private Vector2I _hoveredCell = Vector2I.Zero;
     private Player _player;
     private Texture2D _playerTexture = ResourceLoader.Load("Assets/TinyDungeon/Tiles/tile_0097.png") as Texture2D;
+    private Texture2D _ratTexture = ResourceLoader.Load("Assets/TinyDungeon/Tiles/tile_0123.png") as Texture2D;
 
     private readonly string _dungeonSelectScene = "res://Scenes/UI/DungeonSelect.tscn";
     private DungeonSelect _dungeonSelectMenu;
@@ -149,6 +150,13 @@ public partial class Main : Node2D
         if (_player == null) { CreatePlayer(); }
         _player.OnMoved(_currentLevel.GetPlayerStart());
         _unitLayer.Add(_player, _currentLevel.GetPlayerStart());
+
+        // Add enemies to the board.
+        foreach (Vector2I cell in _currentLevel.GetEnemyTiles())
+        {
+            Enemy e = new(cell, _ratTexture);
+            _unitLayer.Add(e, cell);
+        }
     }
 
     private void CreatePlayer()

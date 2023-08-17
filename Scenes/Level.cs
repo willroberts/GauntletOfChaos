@@ -27,6 +27,11 @@ public partial class Level : TileMap
     public void SetNPCTiles(Array<Vector2I> tiles) { _NPCTiles = tiles; }
     public Array<Vector2I> GetNPCTiles() { return _NPCTiles; }
 
+    // EnemyTiles contains the coordinates of any enemies.
+    private Array<Vector2I> _EnemyTiles;
+    public void SetEnemyTiles(Array<Vector2I> tiles) { _EnemyTiles = tiles; }
+    public Array<Vector2I> GetEnemyTiles() { return _EnemyTiles; }
+
     // IsTown tracks whether an area should use combat rules or town rules.
     // Override to change behavior.
     public virtual bool IsTown() { return false; }

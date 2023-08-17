@@ -32,6 +32,7 @@ public partial class Unit : Node2D, IOccupant
 
     // Defining these methods implements the IOccupant interface.
     public virtual Vector2I GetCell() { return _cell; }
+    public virtual void SetCell(Vector2I cell) { _cell = cell; }
     public virtual int GetRange() { return 3; }
     public virtual bool ReadyToMove() { return true; }
 

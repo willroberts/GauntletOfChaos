@@ -1,4 +1,5 @@
 using Godot;
+using Godot.Collections;
 
 public partial class Tutorial : Level
 {
@@ -31,7 +32,10 @@ public partial class Tutorial : Level
         });
 
         SetNPCTiles(new());
-        GD.Print("Tutorial level initialized.");
+
+        SetEnemyTiles(new(){
+            new(5, 5), new(7, 7), new(9, 9)
+        });
     }
 
     public override bool IsTown() { return false; }
