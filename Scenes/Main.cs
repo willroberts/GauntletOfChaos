@@ -26,6 +26,7 @@ public partial class Main : Node2D
     private readonly BoardLayer _unitLayer = new();
     private Level _currentLevel;
     private Vector2I _hoveredCell = Vector2I.Zero;
+    private Player _player;
     private readonly string _dungeonSelectScene = "res://Scenes/UI/DungeonSelect.tscn";
     private DungeonSelect _dungeonSelectMenu;
 
@@ -40,7 +41,16 @@ public partial class Main : Node2D
     {
         ConfigureHighlightTiles();
         ConfigurePathTiles();
-        ConfigureAndLoadLevel();
+        ChangeLevel(InitialLevel.Instantiate() as Level);
+
+        // Spawn the player.
+        Texture2D tex = ResourceLoader.Load(_playerTexture) as Texture2D;
+        _player = new(_currentLevel.GetPlayerStart(), tex);
+        ResetPlayerPosition();
+        _unitLayer.MoveFinished += _player.OnMoved;
+        _unitLayer.Add(_player, _player.GetCell());
+        AddChild(_player);
+
         ConfigureBoard();
         ConfigureHUD();
         GD.Print("Ready!");
@@ -91,17 +101,23 @@ public partial class Main : Node2D
     }
 
     /*
-    * Scene engine.
-    */
+	* Scene engine.
+	*/
 
     private void ChangeLevel(Level targetLevel)
     {
-        RemoveChild(_currentLevel);
+        if (_currentLevel != null) { RemoveChild(_currentLevel); }
 
         _currentLevel = targetLevel;
         _currentLevel.ZIndex = (int)ZOrder.Level;
         _currentLevel.Initialize();
         AddChild(_currentLevel);
+    }
+
+    private void ResetPlayerPosition()
+    {
+        _unitLayer.Select(_player.GetCell());
+        _unitLayer.MoveSelection(_currentLevel.GetPlayerStart());
     }
 
     /*
@@ -129,16 +145,6 @@ public partial class Main : Node2D
         }
     }
 
-    // LevelManager is responsible for initializing and changing levels.
-    // It emits the GatewayEntered signal when the player steps on a Gateway tile.
-    private void ConfigureAndLoadLevel()
-    {
-        _unitLayer.MoveFinished += OnPlayerMoved;
-
-        // Load the initial scene.
-        ChangeLevel(InitialLevel.Instantiate() as Level);
-    }
-
     private void ConfigureBoard()
     {
         _gameboard.AddLayer("units", _unitLayer);
@@ -154,13 +160,6 @@ public partial class Main : Node2D
         {
             _unitLayer.Add(new NPC(cell), cell);
         }
-
-        // Spawn the player.
-        Texture2D tex = ResourceLoader.Load(_playerTexture) as Texture2D;
-        Player player = new(_currentLevel.GetPlayerStart(), tex);
-        _unitLayer.MoveFinished += player.OnMoved;
-        _unitLayer.Add(player, player.GetCell());
-        AddChild(player);
     }
 
     private void ConfigureHUD()
