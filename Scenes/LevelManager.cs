@@ -2,26 +2,21 @@ using Godot;
 
 public partial class LevelManager : Node2D
 {
-    // TODO: Replace with `Level` type.
-    private TileMap _currentLevel;
+    private Level _currentLevel;
 
-    public void SetLevel(TileMap level)
+    public void Load(Level level)
     {
+        level.Initialize();
         _currentLevel = level;
     }
 
-    public void InitializeLevel()
+    public Level CurrentLevel() { return _currentLevel; }
+
+    // OnMoved is a callback which fires when a unit finishes moving.
+    // Used to detect when a gateway is reached, so we can change the level.
+    public virtual void OnMoved(Vector2I newCell)
     {
-
-    }
-
-    public void ShowLevelSelect()
-    {
-
-    }
-
-    public void HideLevelSelect()
-    {
-
+        if (!_currentLevel.GetGatewayTiles().Contains(newCell)) { return; }
+        GD.Print("Player entered a gateway!");
     }
 }

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Godot;
 
 public partial class Main : Node2D
@@ -11,7 +12,7 @@ public partial class Main : Node2D
 	private Grid _grid = ResourceLoader.Load("res://Resources/Grid.tres") as Grid;
 	private readonly Board _gameboard = new();
 	private readonly BoardLayer _unitLayer = new();
-	private TileMap _currentLevel;
+	private LevelManager _levelManager = new();
 	private Vector2I _hoveredCell = Vector2I.Zero;
 
 	// FIXME: Move this.
@@ -19,14 +20,17 @@ public partial class Main : Node2D
 
 	public override void _Ready()
 	{
-		_currentLevel = GetChild<TileMap>(0);
-		if (_currentLevel.Name == "Town") { HighlightTiles = null; }
+		// Load the initial town level.
+		_levelManager.Load(new Town());
+		_unitLayer.MoveFinished += _levelManager.OnMoved;
+
+		// Configure movement range highlighting.
+		if (_levelManager.CurrentLevel().IsTown()) { HighlightTiles = null; }
 		_unitLayer.HighlightTiles = HighlightTiles;
 
+		// Configure path rendering.
 		_unitLayer.PathTiles = PathTiles;
 		_gameboard.AddLayer("units", _unitLayer);
-
-		// Instantiate the level manager, and subscribe it to the MoveFinished signal.
 
 		// Populate the grid with occupants.
 		RegisterTerrain();
@@ -37,7 +41,7 @@ public partial class Main : Node2D
 	private void SpawnPlayer()
 	{
 		Texture2D tex = ResourceLoader.Load(_playerTexture) as Texture2D;
-		Player player = new((_currentLevel as Level).GetPlayerStart(), tex);
+		Player player = new(_levelManager.CurrentLevel().GetPlayerStart(), tex);
 		_unitLayer.MoveFinished += player.OnMoved;
 		_unitLayer.Add(player, player.GetCell());
 		AddChild(player);
@@ -45,7 +49,7 @@ public partial class Main : Node2D
 
 	private void RegisterNPCs()
 	{
-		foreach (Vector2I cell in (_currentLevel as Level).GetNPCTiles())
+		foreach (Vector2I cell in _levelManager.CurrentLevel().GetNPCTiles())
 		{
 			_unitLayer.Add(new NPC(cell), cell);
 		}
@@ -54,7 +58,7 @@ public partial class Main : Node2D
 	// Mark terrain tiles as not navigable.
 	private void RegisterTerrain()
 	{
-		foreach (Vector2I cell in (_currentLevel as Level).GetTerrainTiles())
+		foreach (Vector2I cell in _levelManager.CurrentLevel().GetTerrainTiles())
 		{
 			_unitLayer.Add(new Terrain(cell), cell);
 		}

@@ -1,9 +1,15 @@
+using System.Threading;
 using Godot;
 using Godot.Collections;
 
 public partial class Town : Level
 {
 	public override void _Ready()
+	{
+		//Initialize();
+	}
+
+	public override void Initialize()
 	{
 		SetPlayerStart(new(9, 4));
 
@@ -48,4 +54,6 @@ public partial class Town : Level
 			new(15, 10)
 		});
 	}
+
+	public override bool IsTown() { return true; }
 }

@@ -78,6 +78,7 @@ HighlightTiles = NodePath("HighlightTiles")
 PathTiles = NodePath("PathTiles")
 
 [node name="Town" parent="." instance=ExtResource("1_mctw0")]
+visible = false
 
 [node name="HUD" parent="." instance=ExtResource("2_imu15")]
 
