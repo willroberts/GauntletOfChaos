@@ -1,7 +1,3 @@
-using System.Threading;
-using Godot;
-using Godot.Collections;
-
 public partial class Town : Level
 {
 	public override void _Ready()
