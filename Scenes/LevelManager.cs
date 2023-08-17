@@ -2,6 +2,9 @@ using Godot;
 
 public partial class LevelManager : Node2D
 {
+    [Signal]
+    public delegate void GatewayEnteredEventHandler();
+
     private Level _currentLevel;
 
     public void Load(Level level)
@@ -17,11 +20,6 @@ public partial class LevelManager : Node2D
     public virtual void OnMoved(Vector2I newCell)
     {
         if (!_currentLevel.GetGatewayTiles().Contains(newCell)) { return; }
-        ShowGatewayUI();
-    }
-
-    public void ShowGatewayUI()
-    {
-        GD.Print("Showing gateway UI");
+        EmitSignal("GatewayEntered");
     }
 }
