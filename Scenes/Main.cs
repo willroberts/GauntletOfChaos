@@ -1,4 +1,3 @@
-using System.IO.Pipes;
 using Godot;
 
 public partial class Main : Node2D
@@ -27,6 +26,7 @@ public partial class Main : Node2D
 		_unitLayer.PathTiles = PathTiles;
 		_gameboard.AddLayer("units", _unitLayer);
 
+		RegisterTerrain();
 		RegisterNPCs();
 		SpawnPlayer();
 	}
@@ -49,11 +49,22 @@ public partial class Main : Node2D
 		if (_currentLevel.Name != "Town") { return; }
 		Town town = _currentLevel as Town;
 
-		foreach (Vector2I cell in town.GetNPCLocations())
+		foreach (Vector2I cell in town.GetNPCTiles())
 		{
-			Unit npc = null;
-			GD.Print("Adding NPC to ", cell);
-			_unitLayer.Add(npc, cell);
+			_unitLayer.Add(new NPC(cell), cell);
+		}
+	}
+
+	// Mark terrain tiles as not navigable.
+	private void RegisterTerrain()
+	{
+		if (_currentLevel.Name == "Town")
+		{
+			Town town = _currentLevel as Town;
+			foreach (Vector2I cell in town.GetTerrainTiles())
+			{
+				_unitLayer.Add(new Terrain(cell), cell);
+			}
 		}
 	}
 

@@ -91,8 +91,10 @@ public partial class BoardLayer : Node2D
 	public void Select(Vector2I cell)
 	{
 		if (!_cellContents.ContainsKey(cell)) { return; }
+		IOccupant contents = _cellContents[cell];
+		if (!contents.ReadyToMove()) { return; }
 
-		_selection = _cellContents[cell];
+		_selection = contents;
 		_highlightCells = ComputeHighlight(cell, _selection.GetRange());
 		DrawHighlight(_highlightCells);
 		ComputePath(_highlightCells);
