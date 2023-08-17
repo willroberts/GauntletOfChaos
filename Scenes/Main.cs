@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using Godot;
 
 public partial class Main : Node2D
@@ -21,7 +20,9 @@ public partial class Main : Node2D
 	public override void _Ready()
 	{
 		// Load the initial town level.
-		_levelManager.Load(new Town());
+		Town townLevel = new();
+		AddChild(townLevel);
+		_levelManager.Load(townLevel);
 		_unitLayer.MoveFinished += _levelManager.OnMoved;
 
 		// Configure movement range highlighting.
