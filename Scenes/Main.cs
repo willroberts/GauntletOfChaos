@@ -1,5 +1,7 @@
 using Godot;
 
+enum ZOrder { Level, Highlight, Items, Path, Units };
+
 public partial class Main : Node2D
 {
 	[Export]
@@ -19,35 +21,31 @@ public partial class Main : Node2D
 
 	public override void _Ready()
 	{
-		var nextLevel = GD.Load("res://Levels/Town.tscn");
-
-		/*
-		# Remove the current level
-		var level = root.get_node("Level")
-		root.remove_child(level)
-		level.call_deferred("free")
-
-		# Add the next level
-		var next_level_resource = load("res://path/to/scene.tscn)
-		var next_level = next_level_resource.instance()
-		root.add_child(next_level)
-		*/
-
 		// Load the initial town level.
-		Town townLevel = new();
+		Town townLevel = GD.Load<PackedScene>("res://Levels/Town.tscn").Instantiate() as Town;
+		townLevel.ZIndex = (int)ZOrder.Level;
 		AddChild(townLevel);
 		_levelManager.Load(townLevel);
 		_unitLayer.MoveFinished += _levelManager.OnMoved;
 
 		// Configure movement range highlighting.
 		if (_levelManager.CurrentLevel().IsTown()) { HighlightTiles = null; }
-		_unitLayer.HighlightTiles = HighlightTiles;
+		if (HighlightTiles != null)
+		{
+			HighlightTiles.ZIndex = (int)ZOrder.Highlight;
+			_unitLayer.HighlightTiles = HighlightTiles;
+		}
+
 
 		// Configure path rendering.
-		_unitLayer.PathTiles = PathTiles;
-		_gameboard.AddLayer("units", _unitLayer);
+		if (PathTiles != null)
+		{
+			PathTiles.ZIndex = (int)ZOrder.Path;
+			_unitLayer.PathTiles = PathTiles;
+		}
 
 		// Populate the grid with occupants.
+		_gameboard.AddLayer("units", _unitLayer);
 		RegisterTerrain();
 		RegisterNPCs();
 		SpawnPlayer();
