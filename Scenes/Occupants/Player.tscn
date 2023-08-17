@@ -1,9 +1,9 @@
 [gd_scene load_steps=2 format=3 uid="uid://dpuovhisulex4"]
 
-[ext_resource type="Script" path="res://Scenes/Player.cs" id="1_2p8p2"]
+[ext_resource type="Script" path="res://Scenes/Occupants/Player.cs" id="1_ngc1y"]
 
 [node name="Player" type="Node2D"]
 texture_filter = 1
-script = ExtResource("1_2p8p2")
+script = ExtResource("1_ngc1y")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
