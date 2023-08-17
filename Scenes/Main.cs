@@ -1,174 +1,173 @@
-using System.Diagnostics.CodeAnalysis;
 using Godot;
 
 enum ZOrder { Level, Highlight, Items, Path, Units, UI };
 
 public partial class Main : Node2D
 {
-	/*
+    /*
 	* Public attributes.
 	*/
 
-	[Export]
-	public PackedScene InitialLevel;
+    [Export]
+    public PackedScene InitialLevel;
 
-	[Export]
-	public TileMap HighlightTiles;
+    [Export]
+    public TileMap HighlightTiles;
 
-	[Export]
-	public TileMap PathTiles;
+    [Export]
+    public TileMap PathTiles;
 
-	/*
+    /*
 	* Private attributes
 	*/
 
-	private Grid _grid = ResourceLoader.Load("res://Resources/Grid.tres") as Grid;
-	private readonly Board _gameboard = new();
-	private readonly BoardLayer _unitLayer = new();
-	private LevelManager _levelManager = new();
-	private Vector2I _hoveredCell = Vector2I.Zero;
-	private DungeonSelect _dungeonSelectMenu;
+    private Grid _grid = ResourceLoader.Load("res://Resources/Grid.tres") as Grid;
+    private readonly Board _gameboard = new();
+    private readonly BoardLayer _unitLayer = new();
+    private LevelManager _levelManager = new();
+    private Vector2I _hoveredCell = Vector2I.Zero;
+    private readonly string _dungeonSelectScene = "res://Scenes/UI/DungeonSelect.tscn";
+    private DungeonSelect _dungeonSelectMenu;
 
-	// FIXME: Move this.
-	private readonly string _playerTexture = "Assets/TinyDungeon/Tiles/tile_0097.png";
+    // FIXME: Move this.
+    private readonly string _playerTexture = "Assets/TinyDungeon/Tiles/tile_0097.png";
 
-	/*
+    /*
 	* Core events.
 	*/
 
-	public override async void _Ready()
-	{
-		GD.Print(0);
-		//await ToSignal(_unitLayer, "ready");
+    public override void _Ready()
+    {
+        ConfigureHighlightTiles();
+        ConfigurePathTiles();
+        ConfigureLevelManagerAndLoad();
+        ConfigureBoard();
+        ConfigureHUD();
+        GD.Print("Ready!");
+    }
 
-		GD.Print(1);
-		ConfigureLevelManagerAndLoad();
-		GD.Print(5);
-		// Prepare connected levels.
-		// FIXME: Use signals instead of preloading hardcoded variable names.
-		Level tutorialLevel = InitialLevel.Instantiate() as Level;
-		tutorialLevel.ZIndex = (int)ZOrder.Level;
+    public override void _Input(InputEvent @event)
+    {
+        // Handle mouse click / touch.
+        if (@event is InputEventMouseButton btn && btn.ButtonIndex == MouseButton.Left && btn.Pressed)
+        {
+            Vector2I target = _grid.ScreenToGrid(btn.Position);
+            //GD.Print("Clicked on ", target);
+            _unitLayer.HandleClick(target);
+            //GetViewport().SetInputAsHandled();
+            return;
+        }
 
-		// Configure and hide the dungeon select menu.
-		PackedScene scn = GD.Load<PackedScene>("res://Scenes/UI/DungeonSelect.tscn");
-		_dungeonSelectMenu = scn.Instantiate() as DungeonSelect;
-		_dungeonSelectMenu.ZIndex = (int)ZOrder.UI;
-		_dungeonSelectMenu.SetButtonValue(0, "Tutorial Dungeon", tutorialLevel);
-		AddChild(_dungeonSelectMenu);
-		_dungeonSelectMenu.Visible = false;
+        // Handle mouse motion.
+        if (@event is InputEventMouseMotion evt)
+        {
+            Vector2I hoveredCell = _grid.Clamp(_grid.ScreenToGrid(evt.Position));
+            if (hoveredCell.Equals(_hoveredCell)) { return; }
+            _hoveredCell = hoveredCell;
+            _unitLayer.HandleHover(_hoveredCell);
+            //GetViewport().SetInputAsHandled();
+            return;
+        }
+    }
 
-		// Configure movement range highlighting.
-		if (_levelManager.CurrentLevel().IsTown()) { HighlightTiles = null; }
-		if (HighlightTiles != null)
-		{
-			HighlightTiles.ZIndex = (int)ZOrder.Highlight;
-			_unitLayer.HighlightTiles = HighlightTiles;
-		}
-
-		// Configure path rendering.
-		if (PathTiles != null)
-		{
-			PathTiles.ZIndex = (int)ZOrder.Path;
-			_unitLayer.PathTiles = PathTiles;
-		}
-
-		// Populate the grid with occupants.
-		_gameboard.AddLayer("units", _unitLayer);
-		RegisterTerrain();
-		RegisterNPCs();
-		SpawnPlayer();
-	}
-
-	public override void _Input(InputEvent @event)
-	{
-		// Handle mouse click / touch.
-		if (@event is InputEventMouseButton btn && btn.ButtonIndex == MouseButton.Left && btn.Pressed)
-		{
-			Vector2I target = _grid.ScreenToGrid(btn.Position);
-			//GD.Print("Clicked on ", target);
-			_unitLayer.HandleClick(target);
-			//GetViewport().SetInputAsHandled();
-			return;
-		}
-
-		// Handle mouse motion.
-		if (@event is InputEventMouseMotion evt)
-		{
-			Vector2I hoveredCell = _grid.Clamp(_grid.ScreenToGrid(evt.Position));
-			if (hoveredCell.Equals(_hoveredCell)) { return; }
-			_hoveredCell = hoveredCell;
-			_unitLayer.HandleHover(_hoveredCell);
-			//GetViewport().SetInputAsHandled();
-			return;
-		}
-	}
-
-	/*
+    /*
 	* Signal handlers.
 	*/
 
-	private void OnGatewayEntered()
-	{
-		_dungeonSelectMenu.Visible = true;
-	}
+    private void OnGatewayEntered()
+    {
+        _dungeonSelectMenu.Visible = true;
+    }
 
-	private void OnDungeonSelected()
-	{
-		_dungeonSelectMenu.Visible = false;
-	}
+    private void OnDungeonSelected(Level targetLevel)
+    {
+        GD.Print("Dungeon selected: ", targetLevel.Name);
+        _dungeonSelectMenu.Visible = false;
+    }
 
-	/*
+    /*
 	* Configuration helpers.
 	*/
 
-	// LevelManager is responsible for initializing and changing levels.
-	// It emits the GatewayEntered signal when the player steps on a Gateway tile.
-	// CS1061 is reported when Roslyn can't find signal names.
-	[SuppressMessage("Compiler", "CS1061")]
-	private async void ConfigureLevelManagerAndLoad()
-	{
-		GD.Print(2);
+    private void ConfigureHighlightTiles()
+    {
+        if (HighlightTiles != null)
+        {
+            HighlightTiles.ZIndex = (int)ZOrder.Highlight;
+        }
 
-		GD.Print(3);
+        // Start with highlight tiles in a disabled state.
+        // They will be enabled when combat begins.
+        _unitLayer.HighlightTiles = null;
+    }
 
-		// Handle the LevelManager's GatewayEntered signal.
-		_levelManager.GatewayEntered += OnGatewayEntered;
+    private void ConfigurePathTiles()
+    {
+        if (PathTiles != null)
+        {
+            PathTiles.ZIndex = (int)ZOrder.Path;
+            _unitLayer.PathTiles = PathTiles;
+        }
+    }
 
-		// LevelManager intercepts the OnMoved signal to check whether or not
-		// the player has entered a Gateway tile.
-		_unitLayer.MoveFinished += _levelManager.OnMoved;
+    // LevelManager is responsible for initializing and changing levels.
+    // It emits the GatewayEntered signal when the player steps on a Gateway tile.
+    private void ConfigureLevelManagerAndLoad()
+    {
+        // Handle the LevelManager's GatewayEntered signal.
+        _levelManager.GatewayEntered += OnGatewayEntered;
 
-		// Load the initial scene.
-		Town townLevel = InitialLevel.Instantiate() as Town;
-		townLevel.ZIndex = (int)ZOrder.Level;
-		AddChild(townLevel);
-		_levelManager.Load(townLevel);
-		GD.Print(4);
-	}
+        // LevelManager intercepts the OnMoved signal to check whether or not
+        // the player has entered a Gateway tile.
+        _unitLayer.MoveFinished += _levelManager.OnMoved;
 
-	private void SpawnPlayer()
-	{
-		Texture2D tex = ResourceLoader.Load(_playerTexture) as Texture2D;
-		Player player = new(_levelManager.CurrentLevel().GetPlayerStart(), tex);
-		_unitLayer.MoveFinished += player.OnMoved;
-		_unitLayer.Add(player, player.GetCell());
-		AddChild(player);
-	}
+        // Load the initial scene.
+        Town townLevel = InitialLevel.Instantiate() as Town;
+        townLevel.ZIndex = (int)ZOrder.Level;
+        AddChild(townLevel);
+        _levelManager.Load(townLevel);
+    }
 
-	private void RegisterNPCs()
-	{
-		foreach (Vector2I cell in _levelManager.CurrentLevel().GetNPCTiles())
-		{
-			_unitLayer.Add(new NPC(cell), cell);
-		}
-	}
+    private void ConfigureBoard()
+    {
+        _gameboard.AddLayer("units", _unitLayer);
 
-	// Mark terrain tiles as not navigable.
-	private void RegisterTerrain()
-	{
-		foreach (Vector2I cell in _levelManager.CurrentLevel().GetTerrainTiles())
-		{
-			_unitLayer.Add(new Terrain(cell), cell);
-		}
-	}
+        // Mark non-navigable tiles as terrain.
+        foreach (Vector2I cell in _levelManager.CurrentLevel().GetTerrainTiles())
+        {
+            _unitLayer.Add(new Terrain(cell), cell);
+        }
+
+        // If the current level has NPCs, load them.
+        foreach (Vector2I cell in _levelManager.CurrentLevel().GetNPCTiles())
+        {
+            _unitLayer.Add(new NPC(cell), cell);
+        }
+
+        // Spawn the player.
+        Texture2D tex = ResourceLoader.Load(_playerTexture) as Texture2D;
+        Player player = new(_levelManager.CurrentLevel().GetPlayerStart(), tex);
+        _unitLayer.MoveFinished += player.OnMoved;
+        _unitLayer.Add(player, player.GetCell());
+        AddChild(player);
+    }
+
+    private void ConfigureHUD()
+    {
+        // Initialize the menu system.
+        PackedScene scn = GD.Load<PackedScene>(_dungeonSelectScene);
+        _dungeonSelectMenu = scn.Instantiate() as DungeonSelect;
+        _dungeonSelectMenu.ZIndex = (int)ZOrder.UI;
+
+        // Prepare connected levels.
+        // FIXME: Use signals instead of preloading hardcoded variable names.
+        Level tutorialLevel = GD.Load<PackedScene>("res://Levels/Tutorial.tscn").Instantiate() as Level;
+        tutorialLevel.ZIndex = (int)ZOrder.Level;
+        _dungeonSelectMenu.SetButtonValue(0, "Tutorial Dungeon", tutorialLevel);
+        _dungeonSelectMenu.DungeonSelected += OnDungeonSelected;
+
+        // Start in a hidden state.
+        _dungeonSelectMenu.Visible = false;
+        AddChild(_dungeonSelectMenu);
+    }
 }
