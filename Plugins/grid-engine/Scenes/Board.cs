@@ -5,15 +5,20 @@ using Godot.Collections;
 // TODO: Consider tight integration with Godot 4 tilemap layers.
 public partial class Board : Node2D
 {
-	private readonly Dictionary<string, BoardLayer> _layers = new();
+    private readonly Dictionary<string, BoardLayer> _layers = new();
 
-	public Dictionary<string, BoardLayer> GetLayers()
-	{
-		return _layers;
-	}
+    public Dictionary<string, BoardLayer> GetLayers()
+    {
+        return _layers;
+    }
 
-	public void AddLayer(string layerName, BoardLayer layer)
-	{
-		_layers.Add(layerName, layer);
-	}
+    public void AddLayer(string layerName, BoardLayer layer)
+    {
+        _layers.Add(layerName, layer);
+    }
+
+    public void Clear()
+    {
+        _layers.Clear();
+    }
 }
