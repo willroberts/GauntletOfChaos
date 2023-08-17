@@ -10,6 +10,9 @@ public partial class Main : Node2D
 	*/
 
 	[Export]
+	public PackedScene InitialLevel;
+
+	[Export]
 	public TileMap HighlightTiles;
 
 	[Export]
@@ -33,16 +36,17 @@ public partial class Main : Node2D
 	* Core events.
 	*/
 
-	public override void _Ready()
+	public override async void _Ready()
 	{
-		// Load the initial town level.
-		Town townLevel = GD.Load<PackedScene>("res://Levels/Town.tscn").Instantiate() as Town;
-		townLevel.ZIndex = (int)ZOrder.Level;
-		AddChild(townLevel);
-		ConfigureLevelManagerAndLoad(townLevel);
+		GD.Print(0);
+		//await ToSignal(_unitLayer, "ready");
 
+		GD.Print(1);
+		ConfigureLevelManagerAndLoad();
+		GD.Print(5);
 		// Prepare connected levels.
-		Tutorial tutorialLevel = GD.Load<PackedScene>("res://Levels/Tutorial.tscn").Instantiate() as Tutorial;
+		// FIXME: Use signals instead of preloading hardcoded variable names.
+		Level tutorialLevel = InitialLevel.Instantiate() as Level;
 		tutorialLevel.ZIndex = (int)ZOrder.Level;
 
 		// Configure and hide the dungeon select menu.
@@ -70,7 +74,6 @@ public partial class Main : Node2D
 
 		// Populate the grid with occupants.
 		_gameboard.AddLayer("units", _unitLayer);
-		_unitLayer.MoveFinished += _levelManager.OnMoved;
 		RegisterTerrain();
 		RegisterNPCs();
 		SpawnPlayer();
@@ -122,9 +125,11 @@ public partial class Main : Node2D
 	// It emits the GatewayEntered signal when the player steps on a Gateway tile.
 	// CS1061 is reported when Roslyn can't find signal names.
 	[SuppressMessage("Compiler", "CS1061")]
-	private async void ConfigureLevelManagerAndLoad(Level startLevel)
+	private async void ConfigureLevelManagerAndLoad()
 	{
-		await ToSignal(_unitLayer, "ready");
+		GD.Print(2);
+
+		GD.Print(3);
 
 		// Handle the LevelManager's GatewayEntered signal.
 		_levelManager.GatewayEntered += OnGatewayEntered;
@@ -134,7 +139,11 @@ public partial class Main : Node2D
 		_unitLayer.MoveFinished += _levelManager.OnMoved;
 
 		// Load the initial scene.
-		_levelManager.Load(startLevel);
+		Town townLevel = InitialLevel.Instantiate() as Town;
+		townLevel.ZIndex = (int)ZOrder.Level;
+		AddChild(townLevel);
+		_levelManager.Load(townLevel);
+		GD.Print(4);
 	}
 
 	private void SpawnPlayer()
