@@ -125,10 +125,10 @@ public partial class BoardLayer : Node2D
     public void Clear()
     {
         _cellContents.Clear();
-        _selection = null;
-        _highlightCells.Clear();
-        _pathfinder = null;
-        _currentPath.Clear();
+        //_selection = null;
+        //_highlightCells.Clear();
+        //_pathfinder = null;
+        //_currentPath.Clear();
     }
 
     /*

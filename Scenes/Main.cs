@@ -26,11 +26,10 @@ public partial class Main : Node2D
     private Level _currentLevel;
     private Vector2I _hoveredCell = Vector2I.Zero;
     private Player _player;
+    private Texture2D _playerTexture = ResourceLoader.Load("Assets/TinyDungeon/Tiles/tile_0097.png") as Texture2D;
+
     private readonly string _dungeonSelectScene = "res://Scenes/UI/DungeonSelect.tscn";
     private DungeonSelect _dungeonSelectMenu;
-
-    // FIXME: Move this.
-    private readonly string _playerTexture = "Assets/TinyDungeon/Tiles/tile_0097.png";
 
     /*
 	* Core events.
@@ -41,15 +40,7 @@ public partial class Main : Node2D
         ConfigureHighlightTiles();
         ConfigurePathTiles();
         ChangeLevel(InitialLevel.Instantiate() as Level);
-
-        // Spawn the player.
-        Texture2D tex = ResourceLoader.Load(_playerTexture) as Texture2D;
-        _player = new(_currentLevel.GetPlayerStart(), tex);
-        //ResetPlayerPosition();
-        _unitLayer.MoveFinished += _player.OnMoved;
-        _unitLayer.Add(_player, _player.GetCell());
         AddChild(_player);
-
         ConfigureHUD();
         GD.Print("Ready!");
     }
@@ -60,7 +51,7 @@ public partial class Main : Node2D
         if (@event is InputEventMouseButton btn && btn.ButtonIndex == MouseButton.Left && btn.Pressed)
         {
             Vector2I target = _grid.ScreenToGrid(btn.Position);
-            //GD.Print("Clicked on ", target);
+            GD.Print("Clicked on ", target);
             _unitLayer.HandleClick(target);
             //GetViewport().SetInputAsHandled();
             return;
@@ -104,19 +95,15 @@ public partial class Main : Node2D
     private void ChangeLevel(Level targetLevel)
     {
         if (_currentLevel != null) { RemoveChild(_currentLevel); }
+        // RemoveChild _player; AddChild _player?
 
         _currentLevel = targetLevel;
-        _currentLevel.ZIndex = (int)ZOrder.Level;
+        AddChild(_currentLevel);
+
+        //_currentLevel.ZIndex = (int)ZOrder.Level;
         _unitLayer.Clear();
         _currentLevel.Initialize();
         InitializeBoard();
-        AddChild(_currentLevel);
-    }
-
-    private void ResetPlayerPosition()
-    {
-        _unitLayer.Select(_player.GetCell());
-        _unitLayer.MoveSelection(_currentLevel.GetPlayerStart());
     }
 
     /*
@@ -157,6 +144,17 @@ public partial class Main : Node2D
         {
             _unitLayer.Add(new NPC(cell), cell);
         }
+
+        // Add the player to the board.
+        if (_player == null) { CreatePlayer(); }
+        _player.OnMoved(_currentLevel.GetPlayerStart());
+        _unitLayer.Add(_player, _currentLevel.GetPlayerStart());
+    }
+
+    private void CreatePlayer()
+    {
+        _player = new(Vector2I.Zero, _playerTexture);
+        _unitLayer.MoveFinished += _player.OnMoved;
     }
 
     private void ConfigureHUD()

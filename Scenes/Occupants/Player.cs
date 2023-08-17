@@ -19,4 +19,9 @@ public partial class Player : Unit, IOccupant
         if (_isInCombat) { return 3; }
         return _grid.Size.X * _grid.Size.Y; // Practically unlimited.
     }
+
+    public void SetIsInCombat(bool value)
+    {
+        _isInCombat = value;
+    }
 }

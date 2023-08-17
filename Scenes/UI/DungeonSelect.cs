@@ -35,10 +35,7 @@ public partial class DungeonSelect : Node2D
         Button target = buttons[id];
         target.Text = text;
         target.Visible = true;
-        target.Pressed += () =>
-        {
-            OnButtonPressed(targetLevel);
-        };
+        target.Pressed += () => { OnButtonPressed(targetLevel); };
     }
 
     private Array<Button> GetButtons()

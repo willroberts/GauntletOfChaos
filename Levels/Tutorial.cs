@@ -31,6 +31,7 @@ public partial class Tutorial : Level
         });
 
         SetNPCTiles(new());
+        GD.Print("Tutorial level initialized.");
     }
 
     public override bool IsTown() { return false; }
