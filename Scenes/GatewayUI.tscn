@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://bhj70ua6sinjw"]
-
-[ext_resource type="Script" path="res://Scenes/GatewayUI.cs" id="1_1odqt"]
-
-[node name="GatewayUI" type="Node2D"]
-script = ExtResource("1_1odqt")
