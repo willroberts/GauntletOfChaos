@@ -1,30 +1,13 @@
 using Godot;
 using Godot.Collections;
 
-public partial class Town : TileMap
+public partial class Town : Level
 {
-	[Export]
-	public Vector2I PlayerStart = new(9, 4);
-
-	public Array<Vector2I> GetNPCTiles()
+	public override void _Ready()
 	{
-		return new()
-		{
-			// Weapon vendor.
-			new(3, 4),
-			// Magic vendor.
-			new(16, 4),
-			// Gambling vendor.
-			new(4, 10),
-			// Identification vendor.
-			new(15, 10)
-		};
-	}
+		SetPlayerStart(new(9, 4));
 
-	public Array<Vector2I> GetTerrainTiles()
-	{
-		return new()
-		{
+		SetTerrainTiles(new() {
 			// Waypoint.
 			new(8, 0), new(9, 0), new(10, 0), new(11, 0),
 			new(8, 1), new(11, 1),
@@ -50,6 +33,19 @@ public partial class Town : TileMap
 			new(14, 7), new(15, 7), new(16, 7), new(17, 7),
 			new(14, 8), new(15, 8), new(16, 8), new(17, 8),
 			new(14, 9), new(15, 9), new(16, 9), new(17, 9)
-		};
+		});
+
+		SetGatewayTiles(new() { new(9, 1), new(10, 1) });
+
+		SetNPCTiles(new() {
+			// Weapon vendor.
+			new(3, 4),
+			// Magic vendor.
+			new(16, 4),
+			// Gambling vendor.
+			new(4, 10),
+			// Identification vendor.
+			new(15, 10)
+		});
 	}
 }

@@ -26,6 +26,9 @@ public partial class Main : Node2D
 		_unitLayer.PathTiles = PathTiles;
 		_gameboard.AddLayer("units", _unitLayer);
 
+		// Instantiate the level manager, and subscribe it to the MoveFinished signal.
+
+		// Populate the grid with occupants.
 		RegisterTerrain();
 		RegisterNPCs();
 		SpawnPlayer();
@@ -33,12 +36,8 @@ public partial class Main : Node2D
 
 	private void SpawnPlayer()
 	{
-		Vector2I startPosition;
-		if (_currentLevel.Name == "Town") { startPosition = new(9, 4); }
-		else { startPosition = new(1, 1); }
-
 		Texture2D tex = ResourceLoader.Load(_playerTexture) as Texture2D;
-		Player player = new(startPosition, tex);
+		Player player = new((_currentLevel as Level).GetPlayerStart(), tex);
 		_unitLayer.MoveFinished += player.OnMoved;
 		_unitLayer.Add(player, player.GetCell());
 		AddChild(player);
@@ -46,10 +45,7 @@ public partial class Main : Node2D
 
 	private void RegisterNPCs()
 	{
-		if (_currentLevel.Name != "Town") { return; }
-		Town town = _currentLevel as Town;
-
-		foreach (Vector2I cell in town.GetNPCTiles())
+		foreach (Vector2I cell in (_currentLevel as Level).GetNPCTiles())
 		{
 			_unitLayer.Add(new NPC(cell), cell);
 		}
@@ -58,13 +54,9 @@ public partial class Main : Node2D
 	// Mark terrain tiles as not navigable.
 	private void RegisterTerrain()
 	{
-		if (_currentLevel.Name == "Town")
+		foreach (Vector2I cell in (_currentLevel as Level).GetTerrainTiles())
 		{
-			Town town = _currentLevel as Town;
-			foreach (Vector2I cell in town.GetTerrainTiles())
-			{
-				_unitLayer.Add(new Terrain(cell), cell);
-			}
+			_unitLayer.Add(new Terrain(cell), cell);
 		}
 	}
 
