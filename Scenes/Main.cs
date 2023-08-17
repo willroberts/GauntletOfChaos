@@ -4,9 +4,11 @@ enum ZOrder { Level, Highlight, Items, Path, Units, UI };
 
 public partial class Main : Node2D
 {
+    private const int units = (int)ZOrder.Units;
+
     /*
-	* Public attributes.
-	*/
+* Public attributes.
+*/
 
     [Export]
     public PackedScene InitialLevel;
@@ -155,7 +157,9 @@ public partial class Main : Node2D
         foreach (Vector2I cell in _currentLevel.GetEnemyTiles())
         {
             Enemy e = new(cell, _ratTexture);
+            e.ZIndex = (int)ZOrder.Units;
             _unitLayer.Add(e, cell);
+            AddChild(e);
         }
     }
 

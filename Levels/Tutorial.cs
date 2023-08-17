@@ -34,7 +34,7 @@ public partial class Tutorial : Level
         SetNPCTiles(new());
 
         SetEnemyTiles(new(){
-            new(5, 5), new(7, 7), new(9, 9)
+            new(5, 4), new(13, 7), new(15, 2)
         });
     }
 
