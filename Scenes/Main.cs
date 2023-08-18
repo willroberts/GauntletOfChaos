@@ -150,10 +150,10 @@ public partial class Main : Node2D
         // Add enemies to the board.
         foreach (Vector2I cell in _currentLevel.GetEnemyTiles())
         {
-            Enemy e = new(cell, _ratTexture);
-            e.ZIndex = (int)ZOrder.Units;
-            _unitLayer.Add(e, cell);
-            AddChild(e);
+            //Enemy e = new(cell, _ratTexture);
+            //e.ZIndex = (int)ZOrder.Units;
+            //_unitLayer.Add(e, cell);
+            //AddChild(e);
         }
     }
 
