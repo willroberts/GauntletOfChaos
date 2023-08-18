@@ -4,11 +4,9 @@ enum ZOrder { Level, Highlight, Items, Path, Units, UI };
 
 public partial class Main : Node2D
 {
-    private const int units = (int)ZOrder.Units;
-
     /*
-* Public attributes.
-*/
+    * Public attributes.
+    */
 
     [Export]
     public PackedScene InitialLevel;

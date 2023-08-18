@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" path="res://Scenes/Main.cs" id="1_e3874"]
 [ext_resource type="PackedScene" uid="uid://bmbj88e2khni4" path="res://Levels/Town.tscn" id="2_ilp7o"]
+[ext_resource type="Texture2D" uid="uid://dlpe6rpb3rga1" path="res://Assets/FirstParty/pathTiles2.png" id="4_of87t"]
 [ext_resource type="Texture2D" uid="uid://3t6xprdo26aw" path="res://Assets/FirstParty/highlightTiles.png" id="4_tv5o7"]
-[ext_resource type="Texture2D" uid="uid://bhp0kga0yjioh" path="res://Assets/FirstParty/pathTiles.png" id="5_234tl"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xl7cd"]
 texture = ExtResource("4_tv5o7")
@@ -16,7 +16,7 @@ texture = ExtResource("4_tv5o7")
 sources/0 = SubResource("TileSetAtlasSource_xl7cd")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xjdn3"]
-texture = ExtResource("5_234tl")
+texture = ExtResource("4_of87t")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 0:0/0/terrain_set = 0
