@@ -1,6 +1,6 @@
 using Godot;
 
-enum ZOrder { Level, Highlight, Items, Path, Units, UI };
+enum ZOrder { Level, Highlight, Items, Path, Units, UnitMask, UI };
 
 public partial class Main : Node2D
 {
@@ -43,7 +43,6 @@ public partial class Main : Node2D
         ChangeLevel(InitialLevel.Instantiate() as Level);
         AddChild(_player);
         ConfigureHUD();
-        GD.Print("Ready!");
     }
 
     public override void _Input(InputEvent @event)
@@ -52,9 +51,8 @@ public partial class Main : Node2D
         if (@event is InputEventMouseButton btn && btn.ButtonIndex == MouseButton.Left && btn.Pressed)
         {
             Vector2I target = _grid.ScreenToGrid(btn.Position);
-            GD.Print("Clicked on ", target);
+            //GD.Print("Clicked on ", target);
             _unitLayer.HandleClick(target);
-            //GetViewport().SetInputAsHandled();
             return;
         }
 
@@ -65,7 +63,6 @@ public partial class Main : Node2D
             if (hoveredCell.Equals(_hoveredCell)) { return; }
             _hoveredCell = hoveredCell;
             _unitLayer.HandleHover(_hoveredCell);
-            //GetViewport().SetInputAsHandled();
             return;
         }
     }
@@ -96,12 +93,11 @@ public partial class Main : Node2D
     private void ChangeLevel(Level targetLevel)
     {
         if (_currentLevel != null) { RemoveChild(_currentLevel); }
-        // RemoveChild _player; AddChild _player?
 
         _currentLevel = targetLevel;
         AddChild(_currentLevel);
 
-        //_currentLevel.ZIndex = (int)ZOrder.Level;
+        _currentLevel.ZIndex = (int)ZOrder.Level;
         _unitLayer.Clear();
         _currentLevel.Initialize();
         InitializeBoard();
@@ -175,7 +171,6 @@ public partial class Main : Node2D
         _dungeonSelectMenu.ZIndex = (int)ZOrder.UI;
 
         // Prepare connected levels.
-        // FIXME: Use signals instead of preloading hardcoded variable names.
         Level tutorialLevel = GD.Load<PackedScene>("res://Levels/Tutorial.tscn").Instantiate() as Level;
         tutorialLevel.ZIndex = (int)ZOrder.Level;
         _dungeonSelectMenu.SetButtonValue(0, "Tutorial Dungeon", tutorialLevel);
