@@ -171,6 +171,7 @@ public partial class Main : Node2D
         _dungeonSelectMenu.ZIndex = (int)ZOrder.UI;
 
         // Prepare connected levels.
+        // FIXME: Set these connections by emitting signals from the Level classes.
         Level tutorialLevel = GD.Load<PackedScene>("res://Levels/Tutorial.tscn").Instantiate() as Level;
         tutorialLevel.ZIndex = (int)ZOrder.Level;
         _dungeonSelectMenu.SetButtonValue(0, "Tutorial Dungeon", tutorialLevel);
