@@ -4,6 +4,7 @@
 [ext_resource type="TileSet" uid="uid://brclx0sgkg1m7" path="res://Resources/TinyDungeon.tres" id="1_23t4h"]
 
 [node name="Tutorial" type="TileMap"]
+texture_filter = 1
 scale = Vector2(4, 4)
 tile_set = ExtResource("1_23t4h")
 format = 2
