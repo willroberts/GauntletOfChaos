@@ -1,4 +1,8 @@
-[gd_scene format=3 uid="uid://detyw2mo4pvhm"]
+[gd_scene load_steps=2 format=3 uid="uid://detyw2mo4pvhm"]
+
+[ext_resource type="TileSet" uid="uid://brclx0sgkg1m7" path="res://Resources/DungeonTiles.tres" id="1_fpo6n"]
 
 [node name="Tutorial_A2" type="TileMap"]
+texture_filter = 1
+tile_set = ExtResource("1_fpo6n")
 format = 2
