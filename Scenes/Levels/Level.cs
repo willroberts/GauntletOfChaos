@@ -43,6 +43,11 @@ public partial class Level : TileMap
 	public void SetEnemyTiles(Array<Vector2I> tiles) { _EnemyTiles = tiles; }
 	public Array<Vector2I> GetEnemyTiles() { return _EnemyTiles; }
 
+	// BossTiles contains the coordinates and types of boss enemies.
+	private Dictionary<Vector2I, Resource> _BossTiles = new();
+	public void SetBossTiles(Dictionary<Vector2I, Resource> tiles) { _BossTiles = tiles; }
+	public Dictionary<Vector2I, Resource> GetBossTiles() { return _BossTiles; }
+
 	// GateTiles contains the coordinates of conditional gates.
 	private Array<Vector2I> _GateTiles = new();
 	public void SetGateTiles(Array<Vector2I> tiles) { _GateTiles = tiles; }
