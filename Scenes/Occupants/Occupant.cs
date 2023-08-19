@@ -12,7 +12,6 @@ public partial class Occupant : Node2D, IOccupant
 	// Occupants must be initialized with their desired location.
 	public Occupant(Vector2I cell, Texture2D texture)
 	{
-		GD.Print("Creating Occupant at ", cell);
 		_cell = cell;
 		if (texture != null) { AddSprite(texture); }
 	}
@@ -21,7 +20,6 @@ public partial class Occupant : Node2D, IOccupant
 	public override void _Ready()
 	{
 		Position = _grid.GridToScreen(GetCell());
-		GD.Print("Occupant Position set to ", Position);
 	}
 
 	// Occupants implement the most basic form of the IOccupant interface.

@@ -11,6 +11,5 @@ public partial class Unit : Occupant
 	{
 		SetCell(newCell);
 		Position = _grid.GridToScreen(newCell);
-		GD.Print("OnMoved: Position set to ", Position);
 	}
 }
