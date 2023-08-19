@@ -1,0 +1,4 @@
+[gd_scene format=3 uid="uid://cawnweimo8xir"]
+
+[node name="Tutorial_C2" type="TileMap"]
+format = 2
