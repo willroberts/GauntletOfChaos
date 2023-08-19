@@ -19,4 +19,7 @@ public partial class Player : Unit, IOccupant
 	{
 		_isInCombat = value;
 	}
+
+	// Override Occupant methods.
+	public override bool ReadyToMove() { return true; }
 }
