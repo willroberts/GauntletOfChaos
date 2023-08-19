@@ -6,11 +6,11 @@ enum ZOrder { Level, Highlight, Items, Path, Occupants, Units, UI };
 public partial class Main : Node2D
 {
 	/*
-	* Public attributes.
+	* Configurable attributes.
 	*/
 
 	[Export]
-	public PackedScene InitialLevel;
+	public Grid Grid = ResourceLoader.Load("res://Resources/Grid.tres") as Grid;
 
 	[Export]
 	public TileMap HighlightTiles;
@@ -18,27 +18,25 @@ public partial class Main : Node2D
 	[Export]
 	public TileMap PathTiles;
 
+	[Export]
+	public PackedScene InitialLevel;
+
+	/*
+	* Managers and Components.
+	*/
+
+	TextureManager _textureManager;
+
 	/*
 	* Private attributes
 	*/
 
-	private Grid _grid = ResourceLoader.Load("res://Resources/Grid.tres") as Grid;
 	private readonly BoardLayer _unitLayer = new();
 	private Level _currentLevel;
 	private Vector2I _hoveredCell = Vector2I.Zero;
 	private Player _player;
 	private readonly string _dungeonSelectScene = "res://Scenes/UI/DungeonSelect.tscn";
 	private DungeonSelect _dungeonSelectMenu;
-
-	/*
-	* Textures
-	*/
-
-	private Texture2D _playerTexture = ResourceLoader.Load("Assets/TinyDungeon/Tiles/tile_0097.png") as Texture2D;
-	private Texture2D _ratTexture = ResourceLoader.Load("Assets/TinyDungeon/Tiles/tile_0123.png") as Texture2D;
-	private Texture2D _gateTexture = ResourceLoader.Load("Assets/TinyDungeon/Tiles/tile_0077.png") as Texture2D;
-	private Texture2D _chestTexture = ResourceLoader.Load("Assets/TinyDungeon/Tiles/tile_0089.png") as Texture2D;
-	private Texture2D _openedChestTexture = ResourceLoader.Load("Assets/TinyDungeon/Tiles/tile_0091.png") as Texture2D;
 
 	/*
 	* Actions (TODO: Move to ActionManager class)
@@ -57,6 +55,9 @@ public partial class Main : Node2D
 
 	public override void _Ready()
 	{
+		// Initialize managers with no dependencies.
+		_textureManager = GetNode<TextureManager>("TextureManager");
+
 		ConfigureHighlightTiles();
 		ConfigurePathTiles();
 		ChangeLevel(InitialLevel.Instantiate() as Level);
@@ -69,7 +70,7 @@ public partial class Main : Node2D
 		// Handle mouse click / touch.
 		if (@event is InputEventMouseButton btn && btn.ButtonIndex == MouseButton.Left && btn.Pressed)
 		{
-			Vector2I target = _grid.ScreenToGrid(btn.Position);
+			Vector2I target = Grid.ScreenToGrid(btn.Position);
 			GD.Print("Debug: Clicked on ", target);
 			_unitLayer.HandleClick(target);
 			return;
@@ -78,7 +79,7 @@ public partial class Main : Node2D
 		// Handle mouse motion.
 		if (@event is InputEventMouseMotion evt)
 		{
-			Vector2I hoveredCell = _grid.Clamp(_grid.ScreenToGrid(evt.Position));
+			Vector2I hoveredCell = Grid.Clamp(Grid.ScreenToGrid(evt.Position));
 			if (hoveredCell.Equals(_hoveredCell)) { return; }
 			_hoveredCell = hoveredCell;
 			_unitLayer.HandleHover(_hoveredCell);
@@ -187,7 +188,7 @@ public partial class Main : Node2D
 		if (_currentLevel.GetEnemyTiles().Count > 0) { StartCombat(); }
 		foreach (Vector2I cell in _currentLevel.GetEnemyTiles())
 		{
-			Enemy e = new(cell, _ratTexture) { ZIndex = (int)ZOrder.Units };
+			Enemy e = new(cell, _textureManager.Get("enemy_rat")) { ZIndex = (int)ZOrder.Units };
 			_unitLayer.Add(e, cell);
 			AddChild(e);
 		}
@@ -200,7 +201,7 @@ public partial class Main : Node2D
 		foreach (Node n in GetChildren()) { if (n is Gate) { RemoveChild(n); } }
 		foreach (Vector2I cell in _currentLevel.GetGateTiles())
 		{
-			Gate g = new(cell, _gateTexture) { ZIndex = (int)ZOrder.Items };
+			Gate g = new(cell, _textureManager.Get("prop_gate")) { ZIndex = (int)ZOrder.Items };
 			_unitLayer.Add(g, cell);
 			AddChild(g);
 		}
@@ -221,7 +222,7 @@ public partial class Main : Node2D
 
 	private void CreatePlayer()
 	{
-		_player = new(_currentLevel.GetPlayerStart(), _playerTexture);
+		_player = new(_currentLevel.GetPlayerStart(), _textureManager.Get("player_knight"));
 		_unitLayer.MoveFinished += _player.OnMoved;
 	}
 
