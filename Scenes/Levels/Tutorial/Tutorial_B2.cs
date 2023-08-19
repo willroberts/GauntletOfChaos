@@ -1,5 +1,3 @@
-using Godot;
-
 public partial class Tutorial_B2 : Level
 {
 	public override void _Ready()

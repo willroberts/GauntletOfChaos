@@ -1,6 +1,3 @@
-using Godot;
-using Godot.Collections;
-
 public partial class Tutorial_B3 : Level
 {
 	public override void _Ready()
