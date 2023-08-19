@@ -1,6 +1,6 @@
 using Godot;
 
-enum ZOrder { Level, Highlight, Items, Path, Units, UnitMask, UI };
+enum ZOrder { Level, Highlight, Items, Path, Occupants, Units, UI };
 
 public partial class Main : Node2D
 {
@@ -155,6 +155,12 @@ public partial class Main : Node2D
             //_unitLayer.Add(e, cell);
             //AddChild(e);
         }
+
+        // Add chests to the board.
+
+        // Add switches to the board.
+
+        // Add gates to the board.
     }
 
     private void CreatePlayer()
