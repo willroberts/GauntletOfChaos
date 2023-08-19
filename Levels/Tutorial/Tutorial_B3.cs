@@ -1,8 +1,14 @@
 using Godot;
 using Godot.Collections;
 
-public partial class Tutorial : Level
+public partial class Tutorial_B3 : Level
 {
+    public override void _Ready()
+    {
+        GD.Print("Tutorial_B3 ready");
+        // Trigger tutorial message for this room.
+    }
+
     public override void Initialize()
     {
         SetPlayerStart(new(9, 10));
@@ -37,6 +43,4 @@ public partial class Tutorial : Level
             new(5, 4), new(13, 7), new(15, 2)
         });
     }
-
-    public override bool IsTown() { return false; }
 }

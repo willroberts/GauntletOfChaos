@@ -3,7 +3,7 @@
 [ext_resource type="TileSet" uid="uid://brclx0sgkg1m7" path="res://Resources/TinyDungeon.tres" id="1_qsj2q"]
 [ext_resource type="Script" path="res://Levels/Tutorial/Tutorial_B3.cs" id="2_cr6db"]
 
-[node name="Tutorial" type="TileMap"]
+[node name="Tutorial_B3" type="TileMap"]
 texture_filter = 1
 scale = Vector2(4, 4)
 tile_set = ExtResource("1_qsj2q")
