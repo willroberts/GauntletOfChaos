@@ -42,6 +42,21 @@ public partial class Level : TileMap
     public void SetEnemyTiles(Array<Vector2I> tiles) { _EnemyTiles = tiles; }
     public Array<Vector2I> GetEnemyTiles() { return _EnemyTiles; }
 
+    // GateTiles contains the coordinates of conditional gates.
+    private Array<Vector2I> _GateTiles = new();
+    public void SetGateTiles(Array<Vector2I> tiles) { _GateTiles = tiles; }
+    public Array<Vector2I> GetGateTiles() { return _GateTiles; }
+
+    // SwitchTiles contains the coordinates of interactable switches.
+    private Array<Vector2I> _SwitchTiles = new();
+    public void SetSwitchTiles(Array<Vector2I> tiles) { _SwitchTiles = tiles; }
+    public Array<Vector2I> GetSwitchTiles() { return _SwitchTiles; }
+
+    // ChestTiles contains the coordinates of treasure chests.
+    private Array<Vector2I> _ChestTiles = new();
+    public void SetChestTiles(Array<Vector2I> tiles) { _ChestTiles = tiles; }
+    public Array<Vector2I> GetChestTiles() { return _ChestTiles; }
+
     // IsTown tracks whether an area should use combat rules or town rules.
     // Override to change behavior.
     public virtual bool IsTown() { return false; }
