@@ -37,6 +37,12 @@ public partial class Tutorial_B1 : Level
 			new(11, 11), new(12, 11), new(13, 11), new(14, 11), new(15, 11), new(16, 11), new(17, 11), new(18, 11), new(19, 11)
 		});
 
+		SetDoorTiles(new() {
+			// Down to B2.
+			{ new(9, 11), "res://Scenes/Levels/Tutorial/Tutorial_B2.tscn" },
+			{ new(10, 11), "res://Scenes/Levels/Tutorial/Tutorial_B2.tscn" }
+		});
+
 		SetEnemyTiles(new() { new(3, 8), new(4, 7), new(15, 7), new(16, 8) });
 
 		Resource boss = null;

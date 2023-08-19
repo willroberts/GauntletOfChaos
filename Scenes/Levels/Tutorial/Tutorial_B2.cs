@@ -39,5 +39,20 @@ public partial class Tutorial_B2 : Level
 			// Bottom wall, second half.
 			new(11, 11), new(12, 11), new(13, 11), new(14, 11), new(15, 11), new(16, 11), new(17, 11), new(18, 11), new(19, 11)
 		});
+
+		SetDoorTiles(new() {
+			// Left to A2.
+			{ new(0, 5), "res://Scenes/Levels/Tutorial/Tutorial_A2.tscn" },
+			{ new(0, 6), "res://Scenes/Levels/Tutorial/Tutorial_A2.tscn" },
+			// Up to B1.
+			{ new(9, 0), "res://Scenes/Levels/Tutorial/Tutorial_B1.tscn" },
+			{ new(10, 0), "res://Scenes/Levels/Tutorial/Tutorial_B1.tscn" },
+			// Right to C2.
+			{ new(19, 5), "res://Scenes/Levels/Tutorial/Tutorial_C2.tscn" },
+			{ new(19, 6), "res://Scenes/Levels/Tutorial/Tutorial_C2.tscn" },
+			// Down to B3.
+			{ new(9, 11), "res://Scenes/Levels/Tutorial/Tutorial_B3.tscn" },
+			{ new(10, 11), "res://Scenes/Levels/Tutorial/Tutorial_B3.tscn" }
+		});
 	}
 }

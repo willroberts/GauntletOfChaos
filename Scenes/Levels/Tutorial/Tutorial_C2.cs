@@ -9,7 +9,7 @@ public partial class Tutorial_C2 : Level
 
 	public override void Initialize()
 	{
-		SetPlayerStart(new(9, 10));
+		SetPlayerStart(new(1, 6));
 
 		SetTerrainTiles(new() {
             // Top wall: (0, 2) to (6, 2).
@@ -27,6 +27,12 @@ public partial class Tutorial_C2 : Level
 
 		SetEnemyTiles(new(){
 			new(5, 4), new(13, 7), new(15, 2)
+		});
+
+		SetDoorTiles(new() {
+			// Left to B2.
+			{ new(0, 5), "res://Scenes/Levels/Tutorial/Tutorial_B2.tscn" },
+			{ new(0, 6), "res://Scenes/Levels/Tutorial/Tutorial_B2.tscn" },
 		});
 	}
 }
