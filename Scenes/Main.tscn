@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://dpxuu6425frma"]
 
 [ext_resource type="Script" path="res://Scenes/Main.cs" id="1_e3874"]
-[ext_resource type="PackedScene" uid="uid://bmbj88e2khni4" path="res://Levels/Town.tscn" id="2_ilp7o"]
+[ext_resource type="PackedScene" uid="uid://bmbj88e2khni4" path="res://Scenes/Levels/Town.tscn" id="2_ilp7o"]
 [ext_resource type="Texture2D" uid="uid://dlpe6rpb3rga1" path="res://Assets/FirstParty/pathTiles2.png" id="4_of87t"]
 [ext_resource type="Texture2D" uid="uid://3t6xprdo26aw" path="res://Assets/FirstParty/highlightTiles.png" id="4_tv5o7"]
 
