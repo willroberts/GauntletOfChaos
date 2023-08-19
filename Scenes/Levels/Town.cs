@@ -44,8 +44,6 @@ public partial class Town : Level
 			// Identification vendor.
 			new(15, 10)
         });
-
-        SetEnemyTiles(new());
     }
 
     public override bool IsTown() { return true; }

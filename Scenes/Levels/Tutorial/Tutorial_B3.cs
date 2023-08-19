@@ -37,8 +37,6 @@ public partial class Tutorial_B3 : Level
             new(16, 11), new(17, 11), new(18, 11)
         });
 
-        SetNPCTiles(new());
-
         SetEnemyTiles(new(){
             new(5, 4), new(13, 7), new(15, 2)
         });
