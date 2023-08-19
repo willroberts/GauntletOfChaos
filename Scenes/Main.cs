@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using Godot;
 
 enum ZOrder { Level, Highlight, Items, Path, Occupants, Units, UI };
@@ -5,8 +8,8 @@ enum ZOrder { Level, Highlight, Items, Path, Occupants, Units, UI };
 public partial class Main : Node2D
 {
 	/*
-    * Public attributes.
-    */
+	* Public attributes.
+	*/
 
 	[Export]
 	public PackedScene InitialLevel;
@@ -30,8 +33,8 @@ public partial class Main : Node2D
 	private DungeonSelect _dungeonSelectMenu;
 
 	/*
-    * Textures
-    */
+	* Textures
+	*/
 
 	private Texture2D _playerTexture = ResourceLoader.Load("Assets/TinyDungeon/Tiles/tile_0097.png") as Texture2D;
 	private Texture2D _ratTexture = ResourceLoader.Load("Assets/TinyDungeon/Tiles/tile_0123.png") as Texture2D;
@@ -57,7 +60,7 @@ public partial class Main : Node2D
 		if (@event is InputEventMouseButton btn && btn.ButtonIndex == MouseButton.Left && btn.Pressed)
 		{
 			Vector2I target = _grid.ScreenToGrid(btn.Position);
-			GD.Print("Clicked on ", target);
+			GD.Print("Debug: Clicked on ", target);
 			_unitLayer.HandleClick(target);
 			return;
 		}
@@ -82,7 +85,16 @@ public partial class Main : Node2D
 		// Show the dungeon select menu when a gateway tile is entered.
 		if (_currentLevel.GetGatewayTiles().Contains(cell))
 		{
+			GD.Print("Debug: Player stepped into a portal");
 			_dungeonSelectMenu.Visible = true;
+		}
+
+		// Change the level when a door tile is entered.
+		if (_currentLevel.GetDoorTiles().ContainsKey(cell))
+		{
+			GD.Print("Debug: Player stepped into a door");
+			string targetLevel = _currentLevel.GetDoorTiles()[cell];
+			ChangeLevel(LevelFromFile(targetLevel));
 		}
 	}
 
@@ -195,5 +207,26 @@ public partial class Main : Node2D
 		// Start in a hidden state.
 		_dungeonSelectMenu.Visible = false;
 		AddChild(_dungeonSelectMenu);
+	}
+
+	/*
+	* Additional helpers
+	*/
+
+	private Level LevelFromFile(string filename)
+	{
+		if (!filename.StartsWith("res://") || !filename.EndsWith(".tscn"))
+		{
+			GD.Print("Error: Level filenames must start with res:// end in .tscn");
+			return null;
+		}
+
+		PackedScene level = GD.Load<PackedScene>(filename);
+		if (level == null)
+		{
+			GD.Print("Error: Failed to load level from ", filename);
+			return null;
+		}
+		return level.Instantiate() as Level;
 	}
 }

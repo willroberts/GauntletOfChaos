@@ -4,7 +4,6 @@ public partial class Tutorial_A2 : Level
 {
 	public override void _Ready()
 	{
-		GD.Print("Tutorial_A2 ready");
 		// Trigger tutorial message for this room.
 	}
 
