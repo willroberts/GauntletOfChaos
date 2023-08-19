@@ -25,10 +25,6 @@ public partial class Tutorial_C2 : Level
             new(6, 3), new(6, 4), new(6, 5), new(6, 6), new(6, 7), new(6, 8)
 		});
 
-		SetEnemyTiles(new(){
-			new(5, 4), new(13, 7), new(15, 2)
-		});
-
 		SetDoorTiles(new() {
 			// Left to B2.
 			{ new(0, 5), "res://Scenes/Levels/Tutorial/Tutorial_B2.tscn" },

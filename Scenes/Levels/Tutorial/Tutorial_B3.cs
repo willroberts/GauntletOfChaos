@@ -46,5 +46,7 @@ public partial class Tutorial_B3 : Level
 			{ new(9, 0), "res://Scenes/Levels/Tutorial/Tutorial_B2.tscn" },
 			{ new(10, 0), "res://Scenes/Levels/Tutorial/Tutorial_B2.tscn" }
 		});
+
+		SetGateTiles(new() { new(9, 2), new(10, 2) }); // Clear type: Defeat All Enemies.
 	}
 }

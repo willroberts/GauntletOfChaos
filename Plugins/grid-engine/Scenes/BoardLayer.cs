@@ -126,6 +126,11 @@ public partial class BoardLayer : Node2D
 		_selection = null;
 	}
 
+	public void ClearCell(Vector2I cell)
+	{
+		if (_cellContents.ContainsKey(cell)) { _cellContents.Remove(cell); }
+	}
+
 	// Remove all occupants from the layer.
 	public void Clear()
 	{

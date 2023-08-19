@@ -38,6 +38,7 @@ public partial class Main : Node2D
 
 	private Texture2D _playerTexture = ResourceLoader.Load("Assets/TinyDungeon/Tiles/tile_0097.png") as Texture2D;
 	private Texture2D _ratTexture = ResourceLoader.Load("Assets/TinyDungeon/Tiles/tile_0123.png") as Texture2D;
+	private Texture2D _gateTexture = ResourceLoader.Load("Assets/TinyDungeon/Tiles/tile_0077.png") as Texture2D;
 	private Texture2D _chestTexture = ResourceLoader.Load("Assets/TinyDungeon/Tiles/tile_0089.png") as Texture2D;
 	private Texture2D _openedChestTexture = ResourceLoader.Load("Assets/TinyDungeon/Tiles/tile_0091.png") as Texture2D;
 
@@ -148,6 +149,8 @@ public partial class Main : Node2D
 
 	private void InitializeBoard()
 	{
+		_unitLayer.Clear();
+
 		// Mark non-navigable tiles as terrain.
 		foreach (Vector2I cell in _currentLevel.GetTerrainTiles())
 		{
@@ -166,12 +169,12 @@ public partial class Main : Node2D
 		_unitLayer.Add(_player, _currentLevel.GetPlayerStart());
 
 		// Add enemies to the board.
+		foreach (Node n in GetChildren()) { if (n is Enemy) { RemoveChild(n); } }
 		foreach (Vector2I cell in _currentLevel.GetEnemyTiles())
 		{
-			//Enemy e = new(cell, _ratTexture);
-			//e.ZIndex = (int)ZOrder.Units;
-			//_unitLayer.Add(e, cell);
-			//AddChild(e);
+			Enemy e = new(cell, _ratTexture) { ZIndex = (int)ZOrder.Units };
+			_unitLayer.Add(e, cell);
+			AddChild(e);
 		}
 
 		// Add chests to the board.
@@ -179,6 +182,26 @@ public partial class Main : Node2D
 		// Add switches to the board.
 
 		// Add gates to the board.
+		foreach (Node n in GetChildren()) { if (n is Gate) { RemoveChild(n); } }
+		foreach (Vector2I cell in _currentLevel.GetGateTiles())
+		{
+			Gate g = new(cell, _gateTexture) { ZIndex = (int)ZOrder.Items };
+			_unitLayer.Add(g, cell);
+			AddChild(g);
+		}
+
+		// Debugging: Destroy gates for now, until enemies and switches are implemented.
+		foreach (Vector2I cell in _currentLevel.GetGateTiles())
+		{
+			foreach (Node n in GetChildren())
+			{
+				if (n is Gate g)
+				{
+					_unitLayer.ClearCell(g.GetCell());
+					RemoveChild(n);
+				}
+			}
+		}
 	}
 
 	private void CreatePlayer()

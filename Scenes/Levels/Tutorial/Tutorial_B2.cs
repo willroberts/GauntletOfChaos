@@ -54,5 +54,7 @@ public partial class Tutorial_B2 : Level
 			{ new(9, 11), "res://Scenes/Levels/Tutorial/Tutorial_B3.tscn" },
 			{ new(10, 11), "res://Scenes/Levels/Tutorial/Tutorial_B3.tscn" }
 		});
+
+		SetGateTiles(new() { new(9, 2), new(10, 2) }); // Clear type: Press switch.
 	}
 }
