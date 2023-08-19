@@ -57,7 +57,7 @@ public partial class Main : Node2D
 		if (@event is InputEventMouseButton btn && btn.ButtonIndex == MouseButton.Left && btn.Pressed)
 		{
 			Vector2I target = _grid.ScreenToGrid(btn.Position);
-			//GD.Print("Clicked on ", target);
+			GD.Print("Clicked on ", target);
 			_unitLayer.HandleClick(target);
 			return;
 		}
@@ -171,7 +171,7 @@ public partial class Main : Node2D
 
 	private void CreatePlayer()
 	{
-		_player = new(Vector2I.Zero, _playerTexture);
+		_player = new(_currentLevel.GetPlayerStart(), _playerTexture);
 		_unitLayer.MoveFinished += _player.OnMoved;
 	}
 
