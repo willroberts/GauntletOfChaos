@@ -1,3 +1,6 @@
-[gd_scene format=3 uid="uid://brht058jsxfm"]
+[gd_scene load_steps=2 format=3 uid="uid://brht058jsxfm"]
+
+[ext_resource type="Script" path="res://Scenes/UI/TutorialMessage.cs" id="1_s5rnw"]
 
 [node name="TutorialMessage" type="Node2D"]
+script = ExtResource("1_s5rnw")
