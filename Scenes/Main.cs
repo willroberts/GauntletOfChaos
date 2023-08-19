@@ -1,7 +1,5 @@
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using Godot;
+using Godot.Collections;
 
 enum ZOrder { Level, Highlight, Items, Path, Occupants, Units, UI };
 
@@ -41,6 +39,17 @@ public partial class Main : Node2D
 	private Texture2D _gateTexture = ResourceLoader.Load("Assets/TinyDungeon/Tiles/tile_0077.png") as Texture2D;
 	private Texture2D _chestTexture = ResourceLoader.Load("Assets/TinyDungeon/Tiles/tile_0089.png") as Texture2D;
 	private Texture2D _openedChestTexture = ResourceLoader.Load("Assets/TinyDungeon/Tiles/tile_0091.png") as Texture2D;
+
+	/*
+	* Actions (TODO: Move to ActionManager class)
+	*/
+
+	private bool _action_canAttack = false;
+	private Array<Vector2I> _action_attackCandidates = new();
+	private bool _action_canOpenChest = false;
+	private Array<Vector2I> _action_chestCandidates = new();
+	private bool _action_canOperateSwitch = false;
+	private Array<Vector2I> _action_switchCandidates = new();
 
 	/*
 	* Core events.
@@ -88,6 +97,7 @@ public partial class Main : Node2D
 		{
 			GD.Print("Debug: Player stepped into a portal");
 			_dungeonSelectMenu.Visible = true;
+			return;
 		}
 
 		// Change the level when a door tile is entered.
@@ -96,7 +106,11 @@ public partial class Main : Node2D
 			GD.Print("Debug: Player stepped into a door");
 			string targetLevel = _currentLevel.GetDoorTiles()[cell];
 			ChangeLevel(LevelFromFile(targetLevel));
+			return;
 		}
+
+		// Determine which actions the player can take.
+		DetermineValidActions();
 	}
 
 	private void OnDungeonSelected(Level targetLevel)
@@ -237,7 +251,7 @@ public partial class Main : Node2D
 	* Additional helpers
 	*/
 
-	private Level LevelFromFile(string filename)
+	private static Level LevelFromFile(string filename)
 	{
 		if (!filename.StartsWith("res://") || !filename.EndsWith(".tscn"))
 		{
@@ -270,5 +284,51 @@ public partial class Main : Node2D
 		GD.Print("Debug: Ending combat.");
 		if (_player != null) { _player.SetIsInCombat(false); }
 		if (_unitLayer != null) { _unitLayer.HighlightTiles = null; }
+	}
+
+	/*
+	* Actions component
+	*/
+
+	private void DetermineValidActions()
+	{
+		if (_player == null || _unitLayer == null)
+		{
+			GD.Print("Error: Failed to check neighboring cells due to null object.");
+			return;
+		}
+
+		ResetActions();
+
+		System.Collections.Generic.Dictionary<Vector2I, IOccupant> neighbors;
+		neighbors = _unitLayer.GetNeighbors(_player.GetCell());
+		foreach ((Vector2I cell, IOccupant neighbor) in neighbors)
+		{
+			if (neighbor is Enemy)
+			{
+				_action_canAttack = true;
+				_action_attackCandidates.Add(cell);
+				GD.Print("You can attack an enemy at ", cell);
+			}
+			if (neighbor is Chest)
+			{
+				_action_canOpenChest = true;
+				_action_chestCandidates.Add(cell);
+				GD.Print("You can open a chest at ", cell);
+			}
+			if (neighbor is Switch)
+			{
+				_action_canOperateSwitch = true;
+				_action_switchCandidates.Add(cell);
+				GD.Print("You can operate a switch at ", cell);
+			}
+		}
+	}
+
+	private void ResetActions()
+	{
+		_action_canAttack = false;
+		_action_canOpenChest = false;
+		_action_canOperateSwitch = false;
 	}
 }

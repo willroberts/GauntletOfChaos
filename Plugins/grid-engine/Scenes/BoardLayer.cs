@@ -1,5 +1,6 @@
 using Godot;
 using Godot.Collections;
+using System.Collections.Generic;
 
 public interface IOccupant
 {
@@ -75,6 +76,30 @@ public partial class BoardLayer : Node2D
 	public bool IsOccupied(Vector2I cell)
 	{
 		return _cellContents.ContainsKey(cell);
+	}
+
+	public IOccupant GetOccupant(Vector2I cell)
+	{
+		if (!_cellContents.ContainsKey(cell))
+		{
+			GD.Print("Error: Attempted to get nonexistant occupant at cell ", cell);
+			return null;
+		}
+
+		return _cellContents[cell];
+	}
+
+	// Given a cell, return any occupants in the four cardinal directions from
+	// that cell.
+	public System.Collections.Generic.Dictionary<Vector2I, IOccupant> GetNeighbors(Vector2I cell)
+	{
+		System.Collections.Generic.Dictionary<Vector2I, IOccupant> result = new();
+		foreach (Vector2I direction in Directions)
+		{
+			Vector2I targetCell = cell + direction;
+			if (IsOccupied(targetCell)) { result.Add(targetCell, GetOccupant(targetCell)); }
+		}
+		return result;
 	}
 
 	public void Add(IOccupant occupant, Vector2I cell)
