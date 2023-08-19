@@ -20,6 +20,7 @@ public partial class Player : Unit, IOccupant
         return _grid.Size.X * _grid.Size.Y; // Practically unlimited.
     }
 
+    // TODO: Set this using BeginCombat / EndCombat signals.
     public void SetIsInCombat(bool value)
     {
         _isInCombat = value;
