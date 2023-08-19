@@ -135,7 +135,7 @@ public partial class Main : Node2D
 
 		// Start with highlight tiles in a disabled state.
 		// They will be enabled when combat begins.
-		_unitLayer.HighlightTiles = null;
+		EndCombat();
 	}
 
 	private void ConfigurePathTiles()
@@ -170,6 +170,7 @@ public partial class Main : Node2D
 
 		// Add enemies to the board.
 		foreach (Node n in GetChildren()) { if (n is Enemy) { RemoveChild(n); } }
+		if (_currentLevel.GetEnemyTiles().Count > 0) { StartCombat(); }
 		foreach (Vector2I cell in _currentLevel.GetEnemyTiles())
 		{
 			Enemy e = new(cell, _ratTexture) { ZIndex = (int)ZOrder.Units };
@@ -251,5 +252,23 @@ public partial class Main : Node2D
 			return null;
 		}
 		return level.Instantiate() as Level;
+	}
+
+	/*
+	* Combat component
+	*/
+
+	private void StartCombat()
+	{
+		GD.Print("Debug: Starting combat.");
+		if (_player != null) { _player.SetIsInCombat(true); }
+		if (_unitLayer != null) { _unitLayer.HighlightTiles = HighlightTiles; }
+	}
+
+	private void EndCombat()
+	{
+		GD.Print("Debug: Ending combat.");
+		if (_player != null) { _player.SetIsInCombat(false); }
+		if (_unitLayer != null) { _unitLayer.HighlightTiles = null; }
 	}
 }
