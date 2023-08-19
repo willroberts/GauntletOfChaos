@@ -34,7 +34,10 @@ public partial class Tutorial_B1 : Level
 			new(0, 11), new(1, 11), new(2, 11), new(3, 11), new(4, 11), new(5, 11), new(6, 11), new(7, 11), new(8, 11),
 
 			// Bottom wall, second part: (11, 11) to (19, 11).
-			new(11, 11), new(12, 11), new(13, 11), new(14, 11), new(15, 11), new(16, 11), new(17, 11), new(18, 11), new(19, 11)
+			new(11, 11), new(12, 11), new(13, 11), new(14, 11), new(15, 11), new(16, 11), new(17, 11), new(18, 11), new(19, 11),
+
+			// Tables.
+			new(4, 8), new(9, 2), new(15, 8)
 		});
 
 		SetDoorTiles(new() {
