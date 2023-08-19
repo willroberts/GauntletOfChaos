@@ -28,10 +28,10 @@ public partial class Level : TileMap
 	public void SetDoorTiles(Dictionary<Vector2I, string> tiles) { _DoorTiles = tiles; }
 	public Dictionary<Vector2I, string> GetDoorTiles() { return _DoorTiles; }
 
-	// GatewayTiles contains the coordinates of gateways to other levels, e.g. portals.
-	private Array<Vector2I> _GatewayTiles = new();
-	public void SetGatewayTiles(Array<Vector2I> tiles) { _GatewayTiles = tiles; }
-	public Array<Vector2I> GetGatewayTiles() { return _GatewayTiles; }
+	// PortalTiles contains the coordinates of portals to other levels, e.g. portals.
+	private Array<Vector2I> _PortalTiles = new();
+	public void SetPortalTiles(Array<Vector2I> tiles) { _PortalTiles = tiles; }
+	public Array<Vector2I> GetPortalTiles() { return _PortalTiles; }
 
 	// NPCTiles contains the coordinates of any NPCs.
 	private Array<Vector2I> _NPCTiles = new();

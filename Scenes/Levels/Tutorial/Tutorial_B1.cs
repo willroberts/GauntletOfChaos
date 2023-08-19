@@ -11,7 +11,7 @@ public partial class Tutorial_B1 : Level
 	{
 		SetPlayerStart(new(9, 10));
 
-		SetGatewayTiles(new() { new(9, 0), new(10, 0) });
+		SetPortalTiles(new() { new(9, 0), new(10, 0) });
 
 		SetTerrainTiles(new() {
 			// Top-left wall.

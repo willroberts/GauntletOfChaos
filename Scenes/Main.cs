@@ -82,8 +82,8 @@ public partial class Main : Node2D
 
 	private void OnPlayerMoved(Vector2I cell)
 	{
-		// Show the dungeon select menu when a gateway tile is entered.
-		if (_currentLevel.GetGatewayTiles().Contains(cell))
+		// Show the dungeon select menu when a portal tile is entered.
+		if (_currentLevel.GetPortalTiles().Contains(cell))
 		{
 			GD.Print("Debug: Player stepped into a portal");
 			_dungeonSelectMenu.Visible = true;
