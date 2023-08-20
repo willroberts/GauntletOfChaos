@@ -6,13 +6,27 @@ public partial class BoardManager : Node2D
 	[Signal]
 	public delegate void OccupantMovedEventHandler(Vector2I newCell);
 
+	private Grid _grid = ResourceLoader.Load("res://Resources/Grid.tres") as Grid;
 	private BoardLayer _unitLayer = new();
 	private TileMap _highlightTiles;
 	private TileMap _pathTiles;
+	private Vector2I _hoveredCell;
 
 	public override void _Ready()
 	{
 		_unitLayer.MoveFinished += ProcessOccupantMoved;
+	}
+
+	public override void _Input(InputEvent @event)
+	{
+		if (@event is InputEventMouseMotion evt)
+		{
+			Vector2I cell = _grid.Clamp(_grid.ScreenToGrid(evt.Position));
+			if (cell.Equals(_hoveredCell)) { return; }
+
+			_hoveredCell = cell;
+			ProcessHover(_hoveredCell);
+		}
 	}
 
 	/*

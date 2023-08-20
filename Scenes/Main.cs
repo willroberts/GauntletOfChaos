@@ -33,7 +33,6 @@ public partial class Main : Node2D
 	*/
 
 	private Level _currentLevel;
-	private Vector2I _hoveredCell = Vector2I.Zero;
 	private Player _player;
 	private readonly string _dungeonSelectScene = "res://Scenes/UI/DungeonSelect.tscn";
 	private DungeonSelect _dungeonSelectMenu;
@@ -67,16 +66,6 @@ public partial class Main : Node2D
 			Vector2I target = Grid.ScreenToGrid(btn.Position);
 			GD.Print("Debug: Clicked on ", target);
 			_boardManager.ProcessClick(target);
-			return;
-		}
-
-		// Handle mouse motion.
-		if (@event is InputEventMouseMotion evt)
-		{
-			Vector2I hoveredCell = Grid.Clamp(Grid.ScreenToGrid(evt.Position));
-			if (hoveredCell.Equals(_hoveredCell)) { return; }
-			_hoveredCell = hoveredCell;
-			_boardManager.ProcessHover(_hoveredCell);
 			return;
 		}
 	}
