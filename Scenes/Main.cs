@@ -24,6 +24,7 @@ public partial class Main : Node2D
 	private LevelManager _levelManager;
 	private TextureManager _textureManager;
 	private UIManager _uiManager;
+	private TurnManager _turnManager = new();
 
 	// FIXME: Move to PlayerManager.
 	private Player _player;
