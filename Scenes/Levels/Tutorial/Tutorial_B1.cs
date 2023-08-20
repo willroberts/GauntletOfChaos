@@ -52,5 +52,9 @@ public partial class Tutorial_B1 : Level
 
 		Resource boss = null;
 		SetBossTiles(new() { { new(10, 2), boss } });
+
+		SetChestTiles(new() { new(3, 2) });
+
+		SetPortalTiles(new() { new(16, 2) });
 	}
 }
