@@ -1,10 +1,10 @@
 using Godot;
 using Godot.Collections;
 
-public partial class DungeonSelect : Node2D
+public partial class PortalMenu : Node2D
 {
 	[Signal]
-	public delegate void DungeonSelectedEventHandler(Level targetLevel);
+	public delegate void LevelSelectedEventHandler(Level targetLevel);
 
 	public override void _Ready()
 	{
@@ -57,6 +57,6 @@ public partial class DungeonSelect : Node2D
 
 	private void OnButtonPressed(Level targetLevel)
 	{
-		EmitSignal("DungeonSelected", targetLevel);
+		EmitSignal("LevelSelected", targetLevel);
 	}
 }

@@ -4,9 +4,9 @@ using Godot.Collections;
 public partial class UIManager : Node2D
 {
 	[Signal]
-	public delegate void PortalButtonPressedEventHandler(Level targetLevel);
+	public delegate void LevelSelectedEventHandler(Level targetLevel);
 
-	private DungeonSelect _portalMenu;
+	private PortalMenu _portalMenu;
 
 	public override void _Ready()
 	{
@@ -15,9 +15,9 @@ public partial class UIManager : Node2D
 
 	public void InitializePortalMenu()
 	{
-		_portalMenu = GD.Load<PackedScene>("res://Scenes/UI/DungeonSelect.tscn").Instantiate() as DungeonSelect;
+		_portalMenu = GD.Load<PackedScene>("res://Scenes/UI/PortalMenu.tscn").Instantiate() as PortalMenu;
 		_portalMenu.ZIndex = (int)ZOrder.UI;
-		_portalMenu.DungeonSelected += OnPortalButtonPressed;
+		_portalMenu.LevelSelected += OnLevelSelected;
 		HidePortalMenu();
 		AddChild(_portalMenu);
 	}
@@ -33,7 +33,6 @@ public partial class UIManager : Node2D
 		int i = 0;
 		foreach ((string name, Level level) in choices)
 		{
-			GD.Print("Setting option ", i, " to ", name, " / ", level);
 			_portalMenu.SetButtonValue(i, name, level);
 			i++;
 		}
@@ -51,9 +50,9 @@ public partial class UIManager : Node2D
 		//RemoveChild(_portalMenu);
 	}
 
-	public void OnPortalButtonPressed(Level targetLevel)
+	public void OnLevelSelected(Level targetLevel)
 	{
-		// Signal passthrough from DungeonSelect to Main.
-		EmitSignal("PortalButtonPressed", targetLevel);
+		// Signal passthrough from LevelSelected to Main.
+		EmitSignal("LevelSelected", targetLevel);
 	}
 }
