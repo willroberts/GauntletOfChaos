@@ -171,6 +171,8 @@ public partial class BoardManager : Node2D
 
 	public void ProcessOccupantMoved(Vector2I newCell)
 	{
+		GD.Print("BoardLayer emitted MoveFinished.");
+		GD.Print("Board shows Player in cell ", newCell);
 		EmitSignal("OccupantMoved", newCell);
 	}
 }

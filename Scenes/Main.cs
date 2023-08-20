@@ -52,6 +52,11 @@ public partial class Main : Node2D
 
 	private void OnPlayerMoved(Vector2I cell)
 	{
+		_player.SetCell(cell);
+		GD.Print("BoardManager emitted OccupantMoved.");
+		GD.Print("BoardManager shows Player in cell ", cell);
+		GD.Print("Player shows cell ", _player.GetCell());
+
 		// Show the dungeon select menu when a portal tile is entered.
 		if (_currentLevel.GetPortalTiles().Contains(cell))
 		{
@@ -84,18 +89,24 @@ public partial class Main : Node2D
 		if (_currentLevel != null) { RemoveChild(_currentLevel); }
 
 		_currentLevel = targetLevel;
-		AddChild(_currentLevel);
-
 		_currentLevel.ZIndex = (int)ZOrder.Level;
 		_currentLevel.Initialize();
+		AddChild(_currentLevel);
+
 		_boardManager.ClearBoard();
 		_boardManager.PopulateBoard(_currentLevel, _textureManager);
 		_uiManager.SetPortalChoices(_currentLevel.GetPortalConnections());
 
-		// Add the player to the board.
+		// Create the Player.
 		if (_player == null) { CreatePlayer(); }
+		// OnMoved updates Player cell (not Board cell) and Position.
 		_player.OnMoved(_currentLevel.GetPlayerStart());
+		// Add the player to the board.
 		_boardManager.AddOccupant(_player, _currentLevel.GetPlayerStart());
+
+		// Debugging.
+		GD.Print("BoardManager emitted OccupantMoved.");
+		GD.Print("Player shows cell ", _player.GetCell());
 
 		if (_currentLevel.GetEnemyTiles().Count > 0) { StartCombat(); }
 		else { EndCombat(); }
