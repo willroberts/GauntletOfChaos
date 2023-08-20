@@ -28,5 +28,7 @@ public partial class Tutorial_A2 : Level
 			{ new(19, 5), "res://Scenes/Levels/Tutorial/Tutorial_B2.tscn" },
 			{ new(19, 6), "res://Scenes/Levels/Tutorial/Tutorial_B2.tscn" },
 		});
+
+		SetChestTiles(new() { new(16, 4) });
 	}
 }

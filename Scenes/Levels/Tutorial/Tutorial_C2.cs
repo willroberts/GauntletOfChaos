@@ -28,5 +28,7 @@ public partial class Tutorial_C2 : Level
 			{ new(0, 5), "res://Scenes/Levels/Tutorial/Tutorial_B2.tscn" },
 			{ new(0, 6), "res://Scenes/Levels/Tutorial/Tutorial_B2.tscn" },
 		});
+
+		SetSwitchTiles(new() { new(3, 4) });
 	}
 }
