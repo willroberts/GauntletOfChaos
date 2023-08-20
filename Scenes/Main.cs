@@ -1,5 +1,4 @@
 using Godot;
-using Godot.Collections;
 
 enum ZOrder { Level, Highlight, Items, Path, Occupants, Units, UI };
 
@@ -26,6 +25,7 @@ public partial class Main : Node2D
 	*/
 
 	BoardManager _boardManager;
+	ActionManager _actionManager;
 	TextureManager _textureManager;
 
 	/*
@@ -39,17 +39,6 @@ public partial class Main : Node2D
 	private DungeonSelect _dungeonSelectMenu;
 
 	/*
-	* Actions (TODO: Move to ActionManager class)
-	*/
-
-	private bool _action_canAttack = false;
-	private Array<Vector2I> _action_attackCandidates = new();
-	private bool _action_canOpenChest = false;
-	private Array<Vector2I> _action_chestCandidates = new();
-	private bool _action_canOperateSwitch = false;
-	private Array<Vector2I> _action_switchCandidates = new();
-
-	/*
 	* Core events.
 	*/
 
@@ -60,6 +49,7 @@ public partial class Main : Node2D
 		_boardManager = GetNode<BoardManager>("BoardManager");
 		_boardManager.InitializeBoard(HighlightTiles, PathTiles);
 		_boardManager.SetHighlightTilesEnabled(false);
+		_actionManager = GetNode<ActionManager>("ActionManager");
 
 		//
 		//EndCombat();
@@ -114,7 +104,7 @@ public partial class Main : Node2D
 		}
 
 		// Determine which actions the player can take.
-		DetermineValidActions();
+		_actionManager.GetActions(_boardManager.GetNeighboringOccupants(cell));
 	}
 
 	private void OnDungeonSelected(Level targetLevel)
@@ -145,6 +135,7 @@ public partial class Main : Node2D
 	*/
 
 	// TODO: Move to BoardManager class.
+	// Really is InitializeLevel(), with LevelManager < BoardManager.
 	private void InitializeBoard()
 	{
 		_boardManager.ClearBoard();
@@ -273,51 +264,5 @@ public partial class Main : Node2D
 		GD.Print("Debug: Ending combat.");
 		_player.SetIsInCombat(false);
 		_boardManager.SetHighlightTilesEnabled(false);
-	}
-
-	/*
-	* Actions component
-	*/
-
-	private void DetermineValidActions()
-	{
-		if (_player == null || _boardManager == null)
-		{
-			GD.Print("Error: Failed to check neighboring cells due to null object.");
-			return;
-		}
-
-		ResetActions();
-
-		System.Collections.Generic.Dictionary<Vector2I, IOccupant> neighbors;
-		neighbors = _boardManager.GetNeighboringOccupants(_player.GetCell());
-		foreach ((Vector2I cell, IOccupant neighbor) in neighbors)
-		{
-			if (neighbor is Enemy)
-			{
-				_action_canAttack = true;
-				_action_attackCandidates.Add(cell);
-				GD.Print("You can attack an enemy at ", cell);
-			}
-			if (neighbor is Chest)
-			{
-				_action_canOpenChest = true;
-				_action_chestCandidates.Add(cell);
-				GD.Print("You can open a chest at ", cell);
-			}
-			if (neighbor is Switch)
-			{
-				_action_canOperateSwitch = true;
-				_action_switchCandidates.Add(cell);
-				GD.Print("You can operate a switch at ", cell);
-			}
-		}
-	}
-
-	private void ResetActions()
-	{
-		_action_canAttack = false;
-		_action_canOpenChest = false;
-		_action_canOperateSwitch = false;
 	}
 }
