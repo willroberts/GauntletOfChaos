@@ -32,7 +32,6 @@ public partial class Main : Node2D
 	* Private attributes
 	*/
 
-	//private readonly BoardLayer _unitLayer = new();
 	private Level _currentLevel;
 	private Vector2I _hoveredCell = Vector2I.Zero;
 	private Player _player;
@@ -63,8 +62,6 @@ public partial class Main : Node2D
 		_boardManager.SetHighlightTilesEnabled(false);
 
 		//
-		//ConfigureHighlightTiles();
-		//ConfigurePathTiles();
 		//EndCombat();
 		ChangeLevel(InitialLevel.Instantiate() as Level);
 		AddChild(_player);
@@ -78,7 +75,6 @@ public partial class Main : Node2D
 		{
 			Vector2I target = Grid.ScreenToGrid(btn.Position);
 			GD.Print("Debug: Clicked on ", target);
-			//_unitLayer.HandleClick(target);
 			_boardManager.ProcessClick(target);
 			return;
 		}
@@ -89,7 +85,6 @@ public partial class Main : Node2D
 			Vector2I hoveredCell = Grid.Clamp(Grid.ScreenToGrid(evt.Position));
 			if (hoveredCell.Equals(_hoveredCell)) { return; }
 			_hoveredCell = hoveredCell;
-			//_unitLayer.HandleHover(_hoveredCell);
 			_boardManager.ProcessHover(_hoveredCell);
 			return;
 		}
@@ -140,7 +135,6 @@ public partial class Main : Node2D
 		AddChild(_currentLevel);
 
 		_currentLevel.ZIndex = (int)ZOrder.Level;
-		//_unitLayer.Clear();
 		_boardManager.ClearBoard();
 		_currentLevel.Initialize();
 		InitializeBoard();
@@ -150,51 +144,26 @@ public partial class Main : Node2D
 	* Configuration helpers.
 	*/
 
-	private void ConfigureHighlightTiles()
-	{
-		if (HighlightTiles != null)
-		{
-			HighlightTiles.ZIndex = (int)ZOrder.Highlight;
-		}
-
-		// Start with highlight tiles in a disabled state.
-		// They will be enabled when combat begins.
-		EndCombat();
-	}
-
-	private void ConfigurePathTiles()
-	{
-		if (PathTiles != null)
-		{
-			//PathTiles.ZIndex = (int)ZOrder.Path;
-			//_unitLayer.PathTiles = PathTiles;
-		}
-	}
-
 	// TODO: Move to BoardManager class.
 	private void InitializeBoard()
 	{
-		//_unitLayer.Clear();
 		_boardManager.ClearBoard();
 
 		// Mark non-navigable tiles as terrain.
 		foreach (Vector2I cell in _currentLevel.GetTerrainTiles())
 		{
-			//_unitLayer.Add(new Terrain(cell), cell);
 			_boardManager.AddOccupant(new Terrain(cell), cell);
 		}
 
 		// If the current level has NPCs, load them.
 		foreach (Vector2I cell in _currentLevel.GetNPCTiles())
 		{
-			//_unitLayer.Add(new NPC(cell), cell);
 			_boardManager.AddOccupant(new NPC(cell), cell);
 		}
 
 		// Add the player to the board.
 		if (_player == null) { CreatePlayer(); }
 		_player.OnMoved(_currentLevel.GetPlayerStart());
-		//_unitLayer.Add(_player, _currentLevel.GetPlayerStart());
 		_boardManager.AddOccupant(_player, _currentLevel.GetPlayerStart());
 
 		// Add enemies to the board.
@@ -203,7 +172,6 @@ public partial class Main : Node2D
 		foreach (Vector2I cell in _currentLevel.GetEnemyTiles())
 		{
 			Enemy e = new(cell, _textureManager.Get("enemy_rat")) { ZIndex = (int)ZOrder.Units };
-			//_unitLayer.Add(e, cell);
 			_boardManager.AddOccupant(e, cell);
 			// TODO: Move children to BoardManager as well, since the board is there.
 			AddChild(e);
@@ -218,7 +186,6 @@ public partial class Main : Node2D
 		foreach (Vector2I cell in _currentLevel.GetGateTiles())
 		{
 			Gate g = new(cell, _textureManager.Get("prop_gate")) { ZIndex = (int)ZOrder.Items };
-			//_unitLayer.Add(g, cell);
 			_boardManager.AddOccupant(g, cell);
 			AddChild(g);
 		}
@@ -230,7 +197,6 @@ public partial class Main : Node2D
 			{
 				if (n is Gate g)
 				{
-					//_unitLayer.ClearCell(g.GetCell());
 					_boardManager.RemoveOccupant(g.GetCell());
 					RemoveChild(n);
 				}
@@ -241,7 +207,6 @@ public partial class Main : Node2D
 	private void CreatePlayer()
 	{
 		_player = new(_currentLevel.GetPlayerStart(), _textureManager.Get("player_knight"));
-		//_unitLayer.MoveFinished += _player.OnMoved;
 		_boardManager.OccupantMoved += _player.OnMoved;
 	}
 
@@ -260,7 +225,6 @@ public partial class Main : Node2D
 		_dungeonSelectMenu.DungeonSelected += OnDungeonSelected;
 
 		// Subscribe to movement-based HUD events.
-		//_unitLayer.MoveFinished += OnPlayerMoved;
 		_boardManager.OccupantMoved += OnPlayerMoved;
 
 		// Start in a hidden state.
@@ -299,7 +263,6 @@ public partial class Main : Node2D
 
 		GD.Print("Debug: Starting combat.");
 		_player.SetIsInCombat(true);
-		//_unitLayer.HighlightTiles = HighlightTiles;
 		_boardManager.SetHighlightTilesEnabled(true);
 	}
 
@@ -309,7 +272,6 @@ public partial class Main : Node2D
 
 		GD.Print("Debug: Ending combat.");
 		_player.SetIsInCombat(false);
-		//_unitLayer.HighlightTiles = null;
 		_boardManager.SetHighlightTilesEnabled(false);
 	}
 
@@ -328,7 +290,6 @@ public partial class Main : Node2D
 		ResetActions();
 
 		System.Collections.Generic.Dictionary<Vector2I, IOccupant> neighbors;
-		//neighbors = _unitLayer.GetNeighbors(_player.GetCell());
 		neighbors = _boardManager.GetNeighboringOccupants(_player.GetCell());
 		foreach ((Vector2I cell, IOccupant neighbor) in neighbors)
 		{
