@@ -19,11 +19,17 @@ public partial class BoardManager : Node2D
 
 	public override void _Input(InputEvent @event)
 	{
-		if (@event is InputEventMouseMotion evt)
+		// Handle mouse click / touch.
+		if (@event is InputEventMouseButton btn && btn.ButtonIndex == MouseButton.Left && btn.Pressed)
+		{
+			Vector2I target = _grid.ScreenToGrid(btn.Position);
+			GD.Print("Debug: Clicked on ", target);
+			ProcessClick(target);
+		}
+		else if (@event is InputEventMouseMotion evt)
 		{
 			Vector2I cell = _grid.Clamp(_grid.ScreenToGrid(evt.Position));
 			if (cell.Equals(_hoveredCell)) { return; }
-
 			_hoveredCell = cell;
 			ProcessHover(_hoveredCell);
 		}

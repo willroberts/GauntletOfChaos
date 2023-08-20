@@ -50,18 +50,6 @@ public partial class Main : Node2D
 		ChangeLevel(InitialLevel.Instantiate() as Level);
 	}
 
-	public override void _Input(InputEvent @event)
-	{
-		// Handle mouse click / touch.
-		if (@event is InputEventMouseButton btn && btn.ButtonIndex == MouseButton.Left && btn.Pressed)
-		{
-			Vector2I target = Grid.ScreenToGrid(btn.Position);
-			GD.Print("Debug: Clicked on ", target);
-			_boardManager.ProcessClick(target);
-			return;
-		}
-	}
-
 	private void OnPlayerMoved(Vector2I cell)
 	{
 		// Show the dungeon select menu when a portal tile is entered.
