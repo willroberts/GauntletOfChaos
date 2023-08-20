@@ -97,12 +97,12 @@ format = 2
 
 [node name="ActionManager" parent="." instance=ExtResource("7_fdk0c")]
 
-[node name="BoardManager" parent="." instance=ExtResource("5_bhfxv")]
-
 [node name="LevelManager" parent="." instance=ExtResource("7_3don8")]
-
-[node name="PlayerManager" parent="." instance=ExtResource("8_nsv1s")]
 
 [node name="TextureManager" parent="." instance=ExtResource("5_h63nj")]
 
 [node name="UIManager" parent="." instance=ExtResource("8_xpx05")]
+
+[node name="BoardManager" parent="." instance=ExtResource("5_bhfxv")]
+
+[node name="PlayerManager" parent="." instance=ExtResource("8_nsv1s")]
