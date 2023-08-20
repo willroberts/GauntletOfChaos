@@ -17,7 +17,7 @@ public partial class BoardManager : Node2D
 		_unitLayer.MoveFinished += OnMoveFinished;
 	}
 
-	public override void _Input(InputEvent @event)
+	public override void _UnhandledInput(InputEvent @event)
 	{
 		// Handle mouse click / touch.
 		if (@event is InputEventMouseButton btn && btn.ButtonIndex == MouseButton.Left && btn.Pressed)
@@ -25,6 +25,7 @@ public partial class BoardManager : Node2D
 			Vector2I target = _grid.ScreenToGrid(btn.Position);
 			GD.Print("Debug[BoardManager]: Clicked on ", target);
 			ProcessClick(target);
+			GetViewport().SetInputAsHandled();
 		}
 		else if (@event is InputEventMouseMotion evt)
 		{
@@ -32,6 +33,7 @@ public partial class BoardManager : Node2D
 			if (cell.Equals(_hoveredCell)) { return; }
 			_hoveredCell = cell;
 			ProcessHover(_hoveredCell);
+			GetViewport().SetInputAsHandled();
 		}
 	}
 
