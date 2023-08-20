@@ -10,7 +10,7 @@ public partial class Player : Unit, IOccupant
 
 	public override int GetRange()
 	{
-		if (_isInCombat) { return 3; }
+		if (_isInCombat) { return 5; }
 		return _grid.Size.X * _grid.Size.Y; // Practically unlimited.
 	}
 
