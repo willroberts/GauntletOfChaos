@@ -16,61 +16,68 @@ public partial class Main : Node2D
 	[Export]
 	public PackedScene InitialLevel;
 
-	private BoardManager _boardManager;
+	[Export]
+	public bool EnableDebugMode = false;
+
 	private ActionManager _actionManager;
+	private BoardManager _boardManager;
+	private LevelManager _levelManager;
 	private TextureManager _textureManager;
 	private UIManager _uiManager;
-
-	// FIXME: Move to LevelManager.
-	private Level _currentLevel;
 
 	// FIXME: Move to PlayerManager.
 	private Player _player;
 
-	/*
-	* Core events.
-	*/
-
 	public override void _Ready()
 	{
-		_textureManager = GetNode<TextureManager>("TextureManager");
+		InitializeManagers();
+		if (_player == null)
+		{
+			// Depends on BoardManager, TextureManager.
+			CreatePlayer();
+		}
+		_levelManager.ChangeLevel(InitialLevel.Instantiate() as Level);
+	}
 
+	private void InitializeManagers()
+	{
+		// Initialize managers with no dependencies first.
+		_actionManager = GetNode<ActionManager>("ActionManager");
+		_levelManager = GetNode<LevelManager>("LevelManager");
+		_levelManager.LevelChanged += OnLevelChanged;
+		_textureManager = GetNode<TextureManager>("TextureManager");
+		_uiManager = GetNode<UIManager>("UIManager");
+		_uiManager.LevelSelected += OnLevelSelected;
+
+		// Depends on TextureManager.
 		_boardManager = GetNode<BoardManager>("BoardManager");
 		_boardManager.InitializeBoard(HighlightTiles, PathTiles);
 		_boardManager.SetHighlightTilesEnabled(false);
-		_boardManager.OccupantMoved += OnPlayerMoved;
-
-		_actionManager = GetNode<ActionManager>("ActionManager");
-
-		_uiManager = GetNode<UIManager>("UIManager");
-		_uiManager.PortalButtonPressed += OnDungeonSelected;
-
-		// Initialize the Level (TODO: Convert to Manager).
-		// Also creates the Player (TODO: Use PlayerManager).
-		ChangeLevel(InitialLevel.Instantiate() as Level);
+		_boardManager.MoveFinished += OnMoveFinished;
 	}
 
-	private void OnPlayerMoved(Vector2I cell)
+	private void OnMoveFinished(Vector2I cell)
 	{
-		_player.SetCell(cell);
-		GD.Print("BoardManager emitted OccupantMoved.");
-		GD.Print("BoardManager shows Player in cell ", cell);
-		GD.Print("Player shows cell ", _player.GetCell());
+		ProcessPlayerMove(cell);
+	}
 
+	private void ProcessPlayerMove(Vector2I cell)
+	{
 		// Show the dungeon select menu when a portal tile is entered.
-		if (_currentLevel.GetPortalTiles().Contains(cell))
+		if (_levelManager.GetCurrentLevel().GetPortalTiles().Contains(cell))
 		{
-			GD.Print("Debug: Player stepped into a portal");
+			GD.Print("Debug[Main:ProcessPlayerMove]: Player stepped into a portal");
 			_uiManager.ShowPortalMenu();
 			return;
 		}
 
 		// Change the level when a door tile is entered.
-		if (_currentLevel.GetDoorTiles().ContainsKey(cell))
+		if (_levelManager.GetCurrentLevel().GetDoorTiles().ContainsKey(cell))
 		{
-			GD.Print("Debug: Player stepped into a door");
-			string targetLevel = _currentLevel.GetDoorTiles()[cell];
-			ChangeLevel(LevelFromFile(targetLevel));
+			GD.Print("Debug[Main:ProcessPlayerMove]: Player stepped into a door");
+			_levelManager.ChangeLevel(LevelFromFile(
+				_levelManager.GetCurrentLevel().GetDoorTiles()[cell]
+			));
 			return;
 		}
 
@@ -78,44 +85,16 @@ public partial class Main : Node2D
 		_actionManager.GetActions(_boardManager.GetNeighboringOccupants(cell));
 	}
 
-	private void OnDungeonSelected(Level targetLevel)
+	private void OnLevelSelected(Level targetLevel)
 	{
 		_uiManager.HidePortalMenu();
-		ChangeLevel(targetLevel);
-	}
-
-	private void ChangeLevel(Level targetLevel)
-	{
-		if (_currentLevel != null) { RemoveChild(_currentLevel); }
-
-		_currentLevel = targetLevel;
-		_currentLevel.ZIndex = (int)ZOrder.Level;
-		_currentLevel.Initialize();
-		AddChild(_currentLevel);
-
-		_boardManager.ClearBoard();
-		_boardManager.PopulateBoard(_currentLevel, _textureManager);
-		_uiManager.SetPortalChoices(_currentLevel.GetPortalConnections());
-
-		// Create the Player.
-		if (_player == null) { CreatePlayer(); }
-		// OnMoved updates Player cell (not Board cell) and Position.
-		_player.OnMoved(_currentLevel.GetPlayerStart());
-		// Add the player to the board.
-		_boardManager.AddOccupant(_player, _currentLevel.GetPlayerStart());
-
-		// Debugging.
-		GD.Print("BoardManager emitted OccupantMoved.");
-		GD.Print("Player shows cell ", _player.GetCell());
-
-		if (_currentLevel.GetEnemyTiles().Count > 0) { StartCombat(); }
-		else { EndCombat(); }
+		_levelManager.ChangeLevel(targetLevel);
 	}
 
 	private void CreatePlayer()
 	{
-		_player = new(_currentLevel.GetPlayerStart(), _textureManager.Get("player_knight"));
-		_boardManager.OccupantMoved += _player.OnMoved;
+		_player = new(Vector2I.Zero, _textureManager.Get("player_knight"));
+		_boardManager.MoveFinished += _player.OnMoveFinished;
 		AddChild(_player);
 	}
 
@@ -138,19 +117,47 @@ public partial class Main : Node2D
 
 	private void StartCombat()
 	{
-		if (_player == null || _boardManager == null) { return; }
+		if (_player == null || _boardManager == null)
+		{
+			GD.Print("Error: Cannot start combat due to nullptr.");
+			return;
+		}
 
-		GD.Print("Debug: Starting combat.");
 		_player.SetIsInCombat(true);
 		_boardManager.SetHighlightTilesEnabled(true);
 	}
 
 	private void EndCombat()
 	{
-		if (_player == null || _boardManager == null) { return; }
+		if (_player == null || _boardManager == null)
+		{
+			GD.Print("Error: Cannot end combat due to nullptr.");
+			return;
+		}
 
-		GD.Print("Debug: Ending combat.");
 		_player.SetIsInCombat(false);
 		_boardManager.SetHighlightTilesEnabled(false);
+	}
+
+	private void OnLevelChanged()
+	{
+		GD.Print("Debug[Main:OnLevelChanged]: Level changed.");
+		Level level = _levelManager.GetCurrentLevel();
+
+		_boardManager.PopulateBoard(level, _textureManager);
+
+		_uiManager.SetPortalChoices(level.GetPortalConnections());
+
+		_player.OnMoveFinished(level.GetPlayerStart());
+		GD.Print("Debug[Main:OnLevelChanged]: Set player screen position to ", _player.Position);
+
+		_player.SetCell(level.GetPlayerStart());
+		GD.Print("Debug[Main:OnLevelChanged]: Set player cell to ", _player.GetCell());
+
+		_boardManager.AddOccupant(_player, level.GetPlayerStart());
+		GD.Print("Debug[Main:OnLevelChanged]: Added to board at ", level.GetPlayerStart());
+
+		if (level.GetEnemyTiles().Count > 0) { StartCombat(); }
+		else { EndCombat(); }
 	}
 }
