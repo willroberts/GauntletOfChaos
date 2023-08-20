@@ -7,7 +7,7 @@ public partial class TextureManager : Node2D
 
 	public override void _Ready()
 	{
-		InitializeCache();
+		Initialize();
 	}
 
 	public Texture2D Get(string textureName)
@@ -21,7 +21,7 @@ public partial class TextureManager : Node2D
 		return _textureCache[textureName];
 	}
 
-	private void InitializeCache()
+	private void Initialize()
 	{
 		// Player.
 		_textureCache.Add("player_knight", LoadTexture("Assets/TinyDungeon/Tiles/tile_0097.png"));
