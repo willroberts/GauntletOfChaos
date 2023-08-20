@@ -63,6 +63,9 @@ public partial class Main : Node2D
 
 	private void ProcessPlayerMove(Vector2I cell)
 	{
+		// Update the Player's cell and screen position.
+		_player.Move(cell);
+
 		// Show the dungeon select menu when a portal tile is entered.
 		if (_levelManager.GetCurrentLevel().GetPortalTiles().Contains(cell))
 		{
@@ -94,7 +97,6 @@ public partial class Main : Node2D
 	private void CreatePlayer()
 	{
 		_player = new(Vector2I.Zero, _textureManager.Get("player_knight"));
-		_boardManager.MoveFinished += _player.OnMoveFinished;
 		AddChild(_player);
 	}
 
@@ -141,21 +143,18 @@ public partial class Main : Node2D
 
 	private void OnLevelChanged()
 	{
+		GD.Print("Debug[Main:OnLevelChanged]: --------------");
 		GD.Print("Debug[Main:OnLevelChanged]: Level changed.");
+		GD.Print("Debug[Main:OnLevelChanged]: --------------");
+
 		Level level = _levelManager.GetCurrentLevel();
-
 		_boardManager.PopulateBoard(level, _textureManager);
-
 		_uiManager.SetPortalChoices(level.GetPortalConnections());
-
-		_player.OnMoveFinished(level.GetPlayerStart());
-		GD.Print("Debug[Main:OnLevelChanged]: Set player screen position to ", _player.Position);
-
-		_player.SetCell(level.GetPlayerStart());
-		GD.Print("Debug[Main:OnLevelChanged]: Set player cell to ", _player.GetCell());
-
+		_player.Move(level.GetPlayerStart());
 		_boardManager.AddOccupant(_player, level.GetPlayerStart());
-		GD.Print("Debug[Main:OnLevelChanged]: Added to board at ", level.GetPlayerStart());
+
+		GD.Print("Debug[Main:OnLevelChanged]: Set player cell to ", _player.GetCell());
+		GD.Print("Debug[Main:OnLevelChanged]: Added player to board at ", level.GetPlayerStart());
 
 		if (level.GetEnemyTiles().Count > 0) { StartCombat(); }
 		else { EndCombat(); }
