@@ -14,12 +14,9 @@ This is achieved with signals:
 1. `BoardManager` propagates `MoveFinished` to `Main`.
 
 `Main:OnMoveFinished()` subscribes to `MoveFinished` and:
+- Calls `Unit:Move()`
 - Checks for doors and portals in the new tile.
 - Prints possible actions to the console.
-
-`Unit:Move()` subscribes to `MoveFinished` in `Main` and:
-- Updates the player's coords with `SetCell()` (not board coords).
-- Updates the player's screen position.
 
 ## Level Change
 
