@@ -17,17 +17,17 @@ public partial class ActionManager : Node2D
 			if (neighbor is Enemy)
 			{
 				actions["attack"].Add(cell);
-				GD.Print("Debug: You can attack an enemy at ", cell);
+				GD.Print("Debug[ActionManager]: You can attack an enemy at ", cell);
 			}
 			else if (neighbor is Chest)
 			{
 				actions["chest"].Add(cell);
-				GD.Print("Debug: You can open a chest at ", cell);
+				GD.Print("Debug[ActionManager]: You can open a chest at ", cell);
 			}
 			else if (neighbor is Switch)
 			{
 				actions["switch"].Add(cell);
-				GD.Print("Debug: You can operate a switch at ", cell);
+				GD.Print("Debug[ActionManager]: You can operate a switch at ", cell);
 			}
 		}
 
