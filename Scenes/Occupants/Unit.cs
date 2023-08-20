@@ -6,10 +6,17 @@ public partial class Unit : Occupant
 
 	public Unit(Vector2I cell, Texture2D texture) : base(cell, texture) { }
 
-	// When the Unit finishes moving, update its location and position.
-	public void OnMoved(Vector2I newCell)
+	public void Move(Vector2I newCell)
 	{
 		SetCell(newCell);
+		GD.Print("Debug[Unit:Move]: Unit cell is now ", newCell);
 		Position = _grid.GridToScreen(newCell);
+		GD.Print("Debug[Unit:Move]: Result of GridToScreen(", newCell, ") was ", Position);
+	}
+
+	// When the Unit finishes moving, update its location and position.
+	public void OnMoveFinished(Vector2I newCell)
+	{
+		Move(newCell);
 	}
 }
