@@ -8,7 +8,6 @@ public partial class TextureManager : Node2D
 	public override void _Ready()
 	{
 		InitializeCache();
-		GD.Print("Debug: TextureManager ready.");
 	}
 
 	public Texture2D Get(string textureName)

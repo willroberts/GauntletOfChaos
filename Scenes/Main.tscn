@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://dpxuu6425frma"]
+[gd_scene load_steps=11 format=3 uid="uid://dpxuu6425frma"]
 
 [ext_resource type="Script" path="res://Scenes/Main.cs" id="1_e3874"]
 [ext_resource type="PackedScene" uid="uid://bmbj88e2khni4" path="res://Scenes/Levels/Town.tscn" id="2_ilp7o"]
 [ext_resource type="Texture2D" uid="uid://dlpe6rpb3rga1" path="res://Assets/FirstParty/pathTiles2.png" id="4_of87t"]
 [ext_resource type="Texture2D" uid="uid://3t6xprdo26aw" path="res://Assets/FirstParty/highlightTiles.png" id="4_tv5o7"]
+[ext_resource type="PackedScene" uid="uid://dqdbg3f43lebr" path="res://Scenes/Managers/BoardManager.tscn" id="5_bhfxv"]
 [ext_resource type="PackedScene" uid="uid://yd7y5w18uykq" path="res://Scenes/Managers/TextureManager.tscn" id="5_h63nj"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xl7cd"]
@@ -74,9 +75,9 @@ sources/0 = SubResource("TileSetAtlasSource_xjdn3")
 
 [node name="Main" type="Node2D" node_paths=PackedStringArray("HighlightTiles", "PathTiles")]
 script = ExtResource("1_e3874")
-InitialLevel = ExtResource("2_ilp7o")
 HighlightTiles = NodePath("HighlightTiles")
 PathTiles = NodePath("PathTiles")
+InitialLevel = ExtResource("2_ilp7o")
 
 [node name="HighlightTiles" type="TileMap" parent="."]
 texture_filter = 1
@@ -88,5 +89,7 @@ format = 2
 scale = Vector2(2, 2)
 tile_set = SubResource("TileSet_uvdqe")
 format = 2
+
+[node name="BoardManager" parent="." instance=ExtResource("5_bhfxv")]
 
 [node name="TextureManager" parent="." instance=ExtResource("5_h63nj")]

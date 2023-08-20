@@ -1,6 +1,5 @@
 using Godot;
 using Godot.Collections;
-using Managers;
 
 enum ZOrder { Level, Highlight, Items, Path, Occupants, Units, UI };
 
@@ -26,14 +25,14 @@ public partial class Main : Node2D
 	* Managers and Components.
 	*/
 
-	BoardManager _boardManager; // TODO: Attach child to scene.
+	BoardManager _boardManager;
 	TextureManager _textureManager;
 
 	/*
 	* Private attributes
 	*/
 
-	private readonly BoardLayer _unitLayer = new();
+	//private readonly BoardLayer _unitLayer = new();
 	private Level _currentLevel;
 	private Vector2I _hoveredCell = Vector2I.Zero;
 	private Player _player;
@@ -59,11 +58,14 @@ public partial class Main : Node2D
 	{
 		// Initialize managers with no dependencies.
 		_textureManager = GetNode<TextureManager>("TextureManager");
+		_boardManager = GetNode<BoardManager>("BoardManager");
 		_boardManager.InitializeBoard(HighlightTiles, PathTiles);
+		_boardManager.SetHighlightTilesEnabled(false);
 
 		//
-		ConfigureHighlightTiles();
-		ConfigurePathTiles();
+		//ConfigureHighlightTiles();
+		//ConfigurePathTiles();
+		//EndCombat();
 		ChangeLevel(InitialLevel.Instantiate() as Level);
 		AddChild(_player);
 		ConfigureHUD();
