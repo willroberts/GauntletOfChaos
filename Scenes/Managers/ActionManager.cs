@@ -3,7 +3,7 @@ using Godot.Collections;
 
 public partial class ActionManager : Node2D
 {
-	public static Dictionary<string, Array<Vector2I>> GetActions(System.Collections.Generic.Dictionary<Vector2I, IOccupant> neighbors)
+	public Dictionary<string, Array<Vector2I>> GetActions(System.Collections.Generic.Dictionary<Vector2I, IOccupant> neighbors)
 	{
 		Dictionary<string, Array<Vector2I>> actions = new()
 		{

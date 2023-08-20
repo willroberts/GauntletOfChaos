@@ -4,10 +4,6 @@ enum ZOrder { Level, Highlight, Items, Path, Occupants, Units, UI };
 
 public partial class Main : Node2D
 {
-	/*
-	* Configurable attributes.
-	*/
-
 	[Export]
 	public Grid Grid = ResourceLoader.Load("res://Resources/Grid.tres") as Grid;
 
@@ -20,20 +16,15 @@ public partial class Main : Node2D
 	[Export]
 	public PackedScene InitialLevel;
 
-	/*
-	* Managers and Components.
-	*/
+	private BoardManager _boardManager;
+	private ActionManager _actionManager;
+	private TextureManager _textureManager;
+	private UIManager _uiManager;
 
-	BoardManager _boardManager;
-	ActionManager _actionManager;
-	TextureManager _textureManager;
-	UIManager _uiManager;
-
-	/*
-	* Private attributes
-	*/
-
+	// FIXME: Move to LevelManager.
 	private Level _currentLevel;
+
+	// FIXME: Move to PlayerManager.
 	private Player _player;
 
 	/*
@@ -71,10 +62,6 @@ public partial class Main : Node2D
 		}
 	}
 
-	/*
-	* Signal handlers.
-	*/
-
 	private void OnPlayerMoved(Vector2I cell)
 	{
 		// Show the dungeon select menu when a portal tile is entered.
@@ -104,10 +91,6 @@ public partial class Main : Node2D
 		ChangeLevel(targetLevel);
 	}
 
-	/*
-	* Scene engine.
-	*/
-
 	private void ChangeLevel(Level targetLevel)
 	{
 		if (_currentLevel != null) { RemoveChild(_currentLevel); }
@@ -130,20 +113,12 @@ public partial class Main : Node2D
 		else { EndCombat(); }
 	}
 
-	/*
-	* Configuration helpers.
-	*/
-
 	private void CreatePlayer()
 	{
 		_player = new(_currentLevel.GetPlayerStart(), _textureManager.Get("player_knight"));
 		_boardManager.OccupantMoved += _player.OnMoved;
 		AddChild(_player);
 	}
-
-	/*
-	* LevelManager
-	*/
 
 	private static Level LevelFromFile(string filename)
 	{
@@ -161,10 +136,6 @@ public partial class Main : Node2D
 		}
 		return level.Instantiate() as Level;
 	}
-
-	/*
-	* Combat component
-	*/
 
 	private void StartCombat()
 	{
