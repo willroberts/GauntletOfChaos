@@ -33,7 +33,6 @@ public partial class UIManager : Node2D
 		{
 			if (btn.Pressed) { Input.SetCustomMouseCursor(_cursorClick); }
 			else { Input.SetCustomMouseCursor(_cursorDefault); }
-
 		}
 	}
 
