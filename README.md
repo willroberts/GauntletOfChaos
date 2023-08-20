@@ -2,17 +2,6 @@
 
 Trial of Chaos is a mobile-first Tactical RPG / Action RPG hybrid developed with Godot.
 
-## Code Structure
-
-- Main
-	- BoardManager
-	- TextureManager
-	- Player
-		- ActionManager
-	- DungeonManager (switch states, treasure states, enemy states)
-		- LevelManager (tilemaps)
-	- UIManager (dungeon select, messages, cursors, etc.)
-
 ## To Do
 
 - Fix player position being hardcoded per level. It should changed based on how/where you entered.
