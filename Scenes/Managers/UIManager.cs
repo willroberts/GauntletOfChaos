@@ -17,8 +17,9 @@ public partial class UIManager : Node2D
 	[Signal]
 	public delegate void LevelSelectedEventHandler(Level targetLevel);
 
-	private readonly Resource _cursorDefault = GD.Load("res://Assets/OpenGameArt/Cursor/cursor.png");
-	private readonly Resource _cursorClick = GD.Load("res://Assets/OpenGameArt/Cursor/cursor_down.png");
+	// TODO: Implement selectable cursor size (Small:32x32, Medium:48x48, Large:64x64).
+	private readonly Resource _cursorDefault = GD.Load("res://Assets/OpenGameArt/Cursor/cursor48.png");
+	private readonly Resource _cursorClick = GD.Load("res://Assets/OpenGameArt/Cursor/cursor48_down.png");
 	private PortalMenu _portalMenu;
 
 	public override void _Ready()
@@ -32,6 +33,7 @@ public partial class UIManager : Node2D
 		{
 			if (btn.Pressed) { Input.SetCustomMouseCursor(_cursorClick); }
 			else { Input.SetCustomMouseCursor(_cursorDefault); }
+
 		}
 	}
 
