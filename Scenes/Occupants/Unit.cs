@@ -11,12 +11,5 @@ public partial class Unit : Occupant
 		SetCell(newCell);
 		GD.Print("Debug[Unit:Move]: Unit cell is now ", newCell);
 		Position = _grid.GridToScreen(newCell);
-		GD.Print("Debug[Unit:Move]: Result of GridToScreen(", newCell, ") was ", Position);
-	}
-
-	// When the Unit finishes moving, update its location and position.
-	public void OnMoveFinished(Vector2I newCell)
-	{
-		Move(newCell);
 	}
 }
