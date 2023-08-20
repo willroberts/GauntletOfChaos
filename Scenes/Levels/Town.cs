@@ -1,3 +1,5 @@
+using Godot;
+
 public partial class Town : Level
 {
 	public override void Initialize()
@@ -33,6 +35,12 @@ public partial class Town : Level
 		});
 
 		SetPortalTiles(new() { new(9, 1), new(10, 1) });
+
+		Level tutorialLevel = GD.Load<PackedScene>("res://Scenes/Levels/Tutorial/Tutorial_B3.tscn").Instantiate() as Level;
+		SetPortalConnections(new()
+		{
+			{ "Tutorial Dungeon", tutorialLevel }
+		});
 
 		SetNPCTiles(new() {
 			// Weapon vendor.

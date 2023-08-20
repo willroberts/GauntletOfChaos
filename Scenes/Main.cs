@@ -27,6 +27,7 @@ public partial class Main : Node2D
 	BoardManager _boardManager;
 	ActionManager _actionManager;
 	TextureManager _textureManager;
+	UIManager _uiManager;
 
 	/*
 	* Private attributes
@@ -34,8 +35,6 @@ public partial class Main : Node2D
 
 	private Level _currentLevel;
 	private Player _player;
-	private readonly string _dungeonSelectScene = "res://Scenes/UI/DungeonSelect.tscn";
-	private DungeonSelect _dungeonSelectMenu;
 
 	/*
 	* Core events.
@@ -43,19 +42,21 @@ public partial class Main : Node2D
 
 	public override void _Ready()
 	{
-		// Initialize Managers with no dependencies.
 		_textureManager = GetNode<TextureManager>("TextureManager");
+
 		_boardManager = GetNode<BoardManager>("BoardManager");
 		_boardManager.InitializeBoard(HighlightTiles, PathTiles);
 		_boardManager.SetHighlightTilesEnabled(false);
+		_boardManager.OccupantMoved += OnPlayerMoved;
+
 		_actionManager = GetNode<ActionManager>("ActionManager");
 
-		// Initialize the Level (TODO: Convert to Manager).
-		// Also creates the Player.
-		ChangeLevel(InitialLevel.Instantiate() as Level);
+		_uiManager = GetNode<UIManager>("UIManager");
+		_uiManager.PortalButtonPressed += OnDungeonSelected;
 
-		// Initialize the HUD (TODO: Convert to Manager).
-		ConfigureHUD();
+		// Initialize the Level (TODO: Convert to Manager).
+		// Also creates the Player (TODO: Use PlayerManager).
+		ChangeLevel(InitialLevel.Instantiate() as Level);
 	}
 
 	public override void _Input(InputEvent @event)
@@ -80,7 +81,7 @@ public partial class Main : Node2D
 		if (_currentLevel.GetPortalTiles().Contains(cell))
 		{
 			GD.Print("Debug: Player stepped into a portal");
-			_dungeonSelectMenu.Visible = true;
+			_uiManager.ShowPortalMenu();
 			return;
 		}
 
@@ -99,7 +100,7 @@ public partial class Main : Node2D
 
 	private void OnDungeonSelected(Level targetLevel)
 	{
-		_dungeonSelectMenu.Visible = false;
+		_uiManager.HidePortalMenu();
 		ChangeLevel(targetLevel);
 	}
 
@@ -118,6 +119,7 @@ public partial class Main : Node2D
 		_currentLevel.Initialize();
 		_boardManager.ClearBoard();
 		_boardManager.PopulateBoard(_currentLevel, _textureManager);
+		_uiManager.SetPortalChoices(_currentLevel.GetPortalConnections());
 
 		// Add the player to the board.
 		if (_player == null) { CreatePlayer(); }
@@ -137,28 +139,6 @@ public partial class Main : Node2D
 		_player = new(_currentLevel.GetPlayerStart(), _textureManager.Get("player_knight"));
 		_boardManager.OccupantMoved += _player.OnMoved;
 		AddChild(_player);
-	}
-
-	private void ConfigureHUD()
-	{
-		// Initialize the menu system.
-		PackedScene scn = GD.Load<PackedScene>(_dungeonSelectScene);
-		_dungeonSelectMenu = scn.Instantiate() as DungeonSelect;
-		_dungeonSelectMenu.ZIndex = (int)ZOrder.UI;
-
-		// Prepare connected levels.
-		// FIXME: Set these connections by emitting signals from the Level classes.
-		Level tutorialLevel = GD.Load<PackedScene>("res://Scenes/Levels/Tutorial/Tutorial_B3.tscn").Instantiate() as Level;
-		tutorialLevel.ZIndex = (int)ZOrder.Level;
-		_dungeonSelectMenu.SetButtonValue(0, "Tutorial Dungeon", tutorialLevel);
-		_dungeonSelectMenu.DungeonSelected += OnDungeonSelected;
-
-		// Subscribe to movement-based HUD events.
-		_boardManager.OccupantMoved += OnPlayerMoved;
-
-		// Start in a hidden state.
-		_dungeonSelectMenu.Visible = false;
-		AddChild(_dungeonSelectMenu);
 	}
 
 	/*

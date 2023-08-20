@@ -36,7 +36,7 @@ public partial class TextureManager : Node2D
 		_textureCache.Add("enemy_rat", LoadTexture("Assets/TinyDungeon/Tiles/tile_0123.png"));
 	}
 
-	private Texture2D LoadTexture(string filename)
+	private static Texture2D LoadTexture(string filename)
 	{
 		return ResourceLoader.Load(filename) as Texture2D;
 	}

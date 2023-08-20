@@ -13,7 +13,6 @@ public partial class Level : TileMap
 	public void SetPlayerStart(Vector2I cell) { _PlayerStart = cell; }
 	public Vector2I GetPlayerStart()
 	{
-		if (_PlayerStart == null) { GD.Print("Error: _PlayerStart cannot be null"); }
 		return _PlayerStart;
 	}
 
@@ -32,6 +31,11 @@ public partial class Level : TileMap
 	private Array<Vector2I> _PortalTiles = new();
 	public void SetPortalTiles(Array<Vector2I> tiles) { _PortalTiles = tiles; }
 	public Array<Vector2I> GetPortalTiles() { return _PortalTiles; }
+
+	// PortalConnections contains the names and scenes of connected Levels.
+	private Dictionary<string, Level> _PortalConnections = new();
+	public void SetPortalConnections(Dictionary<string, Level> conns) { _PortalConnections = conns; }
+	public Dictionary<string, Level> GetPortalConnections() { return _PortalConnections; }
 
 	// NPCTiles contains the coordinates of any NPCs.
 	private Array<Vector2I> _NPCTiles = new();

@@ -65,7 +65,6 @@ public partial class BoardManager : Node2D
 
 	public void PopulateBoard(Level level, TextureManager tex)
 	{
-		GD.Print("Populating board for level ", level);
 		ClearBoard();
 
 		foreach (Vector2I cell in level.GetTerrainTiles())
@@ -83,7 +82,6 @@ public partial class BoardManager : Node2D
 		}
 		foreach (Vector2I cell in level.GetEnemyTiles())
 		{
-			GD.Print("Adding enemy.");
 			Enemy e = new(cell, tex.Get("enemy_rat"));
 			e.ZIndex = (int)ZOrder.Units;
 			AddOccupant(e, cell);
