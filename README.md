@@ -5,12 +5,11 @@ Trial of Chaos is a mobile-first Tactical RPG / Action RPG hybrid developed with
 ## Code Structure
 
 - Main
-	- BoardLayer
-		- HighlightTiles
-		- PathTiles
-	- Managers
-		- BoardManager
-		- TextureManager 
+	- BoardManager
+	- TextureManager
+	- ActionManager
+	- DungeonManager (switch states, treasure states, enemy states)
+		- LevelManager (tilemaps)
 
 ## To Do
 
