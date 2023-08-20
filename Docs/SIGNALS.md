@@ -33,4 +33,3 @@ This is achieved with signals:
 - Configures the portal menu.
 - Creates the Player if null (PlayerManager this out)
 - Updates the Player's location (improve this API with PM).
-- 
