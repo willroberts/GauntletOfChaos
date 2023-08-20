@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public partial class BoardManager : Node2D
 {
 	[Signal]
-	public delegate void OccupantMovedEventHandler(Vector2I newCell);
+	public delegate void MoveFinishedEventHandler(Vector2I newCell);
 
 	private Grid _grid = ResourceLoader.Load("res://Resources/Grid.tres") as Grid;
 	private BoardLayer _unitLayer = new();
@@ -14,7 +14,7 @@ public partial class BoardManager : Node2D
 
 	public override void _Ready()
 	{
-		_unitLayer.MoveFinished += ProcessOccupantMoved;
+		_unitLayer.MoveFinished += OnMoveFinished;
 	}
 
 	public override void _Input(InputEvent @event)
@@ -23,7 +23,7 @@ public partial class BoardManager : Node2D
 		if (@event is InputEventMouseButton btn && btn.ButtonIndex == MouseButton.Left && btn.Pressed)
 		{
 			Vector2I target = _grid.ScreenToGrid(btn.Position);
-			GD.Print("Debug: Clicked on ", target);
+			GD.Print("Debug[BoardManager]: Clicked on ", target);
 			ProcessClick(target);
 		}
 		else if (@event is InputEventMouseMotion evt)
@@ -69,7 +69,7 @@ public partial class BoardManager : Node2D
 		}
 	}
 
-	public void PopulateBoard(Level level, TextureManager tex)
+	public void PopulateBoard(Level level, TextureManager textureCache)
 	{
 		ClearBoard();
 
@@ -88,29 +88,33 @@ public partial class BoardManager : Node2D
 		}
 		foreach (Vector2I cell in level.GetEnemyTiles())
 		{
-			Enemy e = new(cell, tex.Get("enemy_rat"));
+			Enemy e = new(cell, textureCache.Get("enemy_rat"));
 			e.ZIndex = (int)ZOrder.Units;
 			AddOccupant(e, cell);
 			AddChild(e);
 		}
+		bool condition = false;
 		foreach (Vector2I cell in level.GetGateTiles())
 		{
-			continue; // DEBUG: Skip adding gates until switches are in.
-			Gate g = new(cell, tex.Get("prop_gate"));
-			g.ZIndex = (int)ZOrder.Items;
-			AddOccupant(g, cell);
-			AddChild(g);
+			// DEBUG: Skip adding gates until switches are in.
+			if (condition)
+			{
+				Gate g = new(cell, textureCache.Get("prop_gate"));
+				g.ZIndex = (int)ZOrder.Items;
+				AddOccupant(g, cell);
+				AddChild(g);
+			}
 		}
 		foreach (Vector2I cell in level.GetSwitchTiles())
 		{
-			Switch s = new(cell, tex.Get("prop_switch"));
+			Switch s = new(cell, textureCache.Get("prop_switch"));
 			s.ZIndex = (int)ZOrder.Items;
 			AddOccupant(s, cell);
 			AddChild(s);
 		}
 		foreach (Vector2I cell in level.GetChestTiles())
 		{
-			Chest c = new(cell, tex.Get("prop_chest"));
+			Chest c = new(cell, textureCache.Get("prop_chest"));
 			c.ZIndex = (int)ZOrder.Items;
 			AddOccupant(c, cell);
 			AddChild(c);
@@ -169,10 +173,9 @@ public partial class BoardManager : Node2D
 		_unitLayer.HandleHover(cell);
 	}
 
-	public void ProcessOccupantMoved(Vector2I newCell)
+	// Propagate this signal to Main with no changes.
+	public void OnMoveFinished(Vector2I newCell)
 	{
-		GD.Print("BoardLayer emitted MoveFinished.");
-		GD.Print("BoardLayer shows Player in cell ", newCell);
-		EmitSignal("OccupantMoved", newCell);
+		EmitSignal("MoveFinished", newCell);
 	}
 }
