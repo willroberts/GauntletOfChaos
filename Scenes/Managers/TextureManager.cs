@@ -27,6 +27,7 @@ public partial class TextureManager : Node2D
 		_textureCache.Add("player_knight", LoadTexture("Assets/TinyDungeon/Tiles/tile_0097.png"));
 		// Props.
 		_textureCache.Add("prop_gate", LoadTexture("Assets/TinyDungeon/Tiles/tile_0077.png"));
+		_textureCache.Add("prop_switch", LoadTexture("Assets/TinyDungeon/Tiles/tile_0125.png"));
 		_textureCache.Add("prop_chest", LoadTexture("Assets/TinyDungeon/Tiles/tile_0089.png"));
 		_textureCache.Add("prop_chest_opened", LoadTexture("Assets/TinyDungeon/Tiles/tile_0091.png"));
 		// Enemies.
