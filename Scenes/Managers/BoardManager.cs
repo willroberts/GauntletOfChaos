@@ -1,8 +1,6 @@
 using Godot;
 using System.Collections.Generic;
 
-// TileManager keeps track of non-Level tilemaps, such as those for highlight
-// tiles or path tiles.
 public partial class BoardManager : Node2D
 {
 	[Signal]
@@ -14,7 +12,6 @@ public partial class BoardManager : Node2D
 
 	public override void _Ready()
 	{
-		// Subscribe to BoardLayer's MoveFinished signal.
 		_unitLayer.MoveFinished += ProcessOccupantMoved;
 	}
 
@@ -42,12 +39,81 @@ public partial class BoardManager : Node2D
 	public void ClearBoard()
 	{
 		_unitLayer.Clear();
+
+		foreach (Node n in GetChildren())
+		{
+			if (n is Enemy || n is Gate || n is Chest || n is Switch)
+			{
+				RemoveChild(n);
+			}
+		}
+	}
+
+	public void PopulateBoard(Level level, TextureManager tex)
+	{
+		GD.Print("Populating board for level ", level);
+		ClearBoard();
+
+		foreach (Vector2I cell in level.GetTerrainTiles())
+		{
+			Terrain t = new(cell);
+			t.ZIndex = (int)ZOrder.Level;
+			AddOccupant(t, cell);
+		}
+		foreach (Vector2I cell in level.GetNPCTiles())
+		{
+			NPC n = new(cell);
+			n.ZIndex = (int)ZOrder.Units;
+			AddOccupant(n, cell);
+			//AddChild(n); // Disabled: NPCs don't have textures yet.
+		}
+		foreach (Vector2I cell in level.GetEnemyTiles())
+		{
+			GD.Print("Adding enemy.");
+			Enemy e = new(cell, tex.Get("enemy_rat"));
+			e.ZIndex = (int)ZOrder.Units;
+			AddOccupant(e, cell);
+			AddChild(e);
+		}
+		foreach (Vector2I cell in level.GetGateTiles())
+		{
+			continue; // DEBUG: Skip adding gates until switches are in.
+			Gate g = new(cell, tex.Get("prop_gate"));
+			g.ZIndex = (int)ZOrder.Items;
+			AddOccupant(g, cell);
+			AddChild(g);
+		}
+		foreach (Vector2I cell in level.GetSwitchTiles())
+		{
+			Switch s = new(cell, tex.Get("prop_switch"));
+			s.ZIndex = (int)ZOrder.Items;
+			AddOccupant(s, cell);
+			AddChild(s);
+		}
+		foreach (Vector2I cell in level.GetChestTiles())
+		{
+			Chest c = new(cell, tex.Get("prop_chest"));
+			c.ZIndex = (int)ZOrder.Items;
+			AddOccupant(c, cell);
+			AddChild(c);
+		}
+	}
+
+	public void DestroyGates()
+	{
+		foreach (Node n in GetChildren())
+		{
+			if (n is Gate g)
+			{
+				RemoveOccupant(g.GetCell());
+				RemoveChild(n);
+			}
+		}
 	}
 
 	public void AddOccupant(IOccupant occupant, Vector2I cell)
 	{
 		_unitLayer.Add(occupant, cell);
-		//AddChild(occupant as Occupant);
 	}
 
 	public void RemoveOccupant(Vector2I cell)

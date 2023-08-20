@@ -44,17 +44,18 @@ public partial class Main : Node2D
 
 	public override void _Ready()
 	{
-		// Initialize managers with no dependencies.
+		// Initialize Managers with no dependencies.
 		_textureManager = GetNode<TextureManager>("TextureManager");
 		_boardManager = GetNode<BoardManager>("BoardManager");
 		_boardManager.InitializeBoard(HighlightTiles, PathTiles);
 		_boardManager.SetHighlightTilesEnabled(false);
 		_actionManager = GetNode<ActionManager>("ActionManager");
 
-		//
-		//EndCombat();
+		// Initialize the Level (TODO: Convert to Manager).
+		// Also creates the Player.
 		ChangeLevel(InitialLevel.Instantiate() as Level);
-		AddChild(_player);
+
+		// Initialize the HUD (TODO: Convert to Manager).
 		ConfigureHUD();
 	}
 
@@ -125,80 +126,28 @@ public partial class Main : Node2D
 		AddChild(_currentLevel);
 
 		_currentLevel.ZIndex = (int)ZOrder.Level;
-		_boardManager.ClearBoard();
 		_currentLevel.Initialize();
-		InitializeBoard();
-	}
-
-	/*
-	* Configuration helpers.
-	*/
-
-	// TODO: Move to BoardManager class.
-	// Really is InitializeLevel(), with LevelManager < BoardManager.
-	private void InitializeBoard()
-	{
 		_boardManager.ClearBoard();
-
-		// Mark non-navigable tiles as terrain.
-		foreach (Vector2I cell in _currentLevel.GetTerrainTiles())
-		{
-			_boardManager.AddOccupant(new Terrain(cell), cell);
-		}
-
-		// If the current level has NPCs, load them.
-		foreach (Vector2I cell in _currentLevel.GetNPCTiles())
-		{
-			_boardManager.AddOccupant(new NPC(cell), cell);
-		}
+		_boardManager.PopulateBoard(_currentLevel, _textureManager);
 
 		// Add the player to the board.
 		if (_player == null) { CreatePlayer(); }
 		_player.OnMoved(_currentLevel.GetPlayerStart());
 		_boardManager.AddOccupant(_player, _currentLevel.GetPlayerStart());
 
-		// Add enemies to the board.
-		foreach (Node n in GetChildren()) { if (n is Enemy) { RemoveChild(n); } }
 		if (_currentLevel.GetEnemyTiles().Count > 0) { StartCombat(); }
-		foreach (Vector2I cell in _currentLevel.GetEnemyTiles())
-		{
-			Enemy e = new(cell, _textureManager.Get("enemy_rat")) { ZIndex = (int)ZOrder.Units };
-			_boardManager.AddOccupant(e, cell);
-			// TODO: Move children to BoardManager as well, since the board is there.
-			AddChild(e);
-		}
-
-		// Add chests to the board.
-
-		// Add switches to the board.
-
-		// Add gates to the board.
-		foreach (Node n in GetChildren()) { if (n is Gate) { RemoveChild(n); } }
-		foreach (Vector2I cell in _currentLevel.GetGateTiles())
-		{
-			Gate g = new(cell, _textureManager.Get("prop_gate")) { ZIndex = (int)ZOrder.Items };
-			_boardManager.AddOccupant(g, cell);
-			AddChild(g);
-		}
-
-		// Debugging: Destroy gates for now, until enemies and switches are implemented.
-		foreach (Vector2I cell in _currentLevel.GetGateTiles())
-		{
-			foreach (Node n in GetChildren())
-			{
-				if (n is Gate g)
-				{
-					_boardManager.RemoveOccupant(g.GetCell());
-					RemoveChild(n);
-				}
-			}
-		}
+		else { EndCombat(); }
 	}
+
+	/*
+	* Configuration helpers.
+	*/
 
 	private void CreatePlayer()
 	{
 		_player = new(_currentLevel.GetPlayerStart(), _textureManager.Get("player_knight"));
 		_boardManager.OccupantMoved += _player.OnMoved;
+		AddChild(_player);
 	}
 
 	private void ConfigureHUD()
@@ -224,7 +173,7 @@ public partial class Main : Node2D
 	}
 
 	/*
-	* Additional helpers
+	* LevelManager
 	*/
 
 	private static Level LevelFromFile(string filename)
