@@ -1,16 +1,38 @@
 using Godot;
 using Godot.Collections;
 
+/*
+  public override void _Input(InputEvent @event)
+  {
+    if (@event is InputEventMouseButton btn && btn.ButtonIndex == MouseButton.Left)
+    {
+      if (btn.Pressed) { Input.SetCustomMouseCursor(_cursorClick); }
+      else { Input.SetCustomMouseCursor(_cursorDefault); }
+    }
+  }
+*/
+
 public partial class UIManager : Node2D
 {
 	[Signal]
 	public delegate void LevelSelectedEventHandler(Level targetLevel);
 
+	private readonly Resource _cursorDefault = GD.Load("res://Assets/OpenGameArt/Cursor/cursor.png");
+	private readonly Resource _cursorClick = GD.Load("res://Assets/OpenGameArt/Cursor/cursor_down.png");
 	private PortalMenu _portalMenu;
 
 	public override void _Ready()
 	{
 		InitializePortalMenu();
+	}
+
+	public override void _Input(InputEvent @event)
+	{
+		if (@event is InputEventMouseButton btn && btn.ButtonIndex == MouseButton.Left)
+		{
+			if (btn.Pressed) { Input.SetCustomMouseCursor(_cursorClick); }
+			else { Input.SetCustomMouseCursor(_cursorDefault); }
+		}
 	}
 
 	public void InitializePortalMenu()
