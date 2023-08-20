@@ -1,6 +1,15 @@
 using Godot;
 using Godot.Collections;
 
+// TODO: Consider CanvasItem or other Canvas classes.
+// Scene tree:
+// - PortalMenu (Node)
+//   - Heading (Sprite)
+//     - Label (Label)
+//   - Window (Sprite)
+//     - Button1 (Button)
+//     - Button2 (Button)
+//     - Button3 (Button)
 public partial class PortalMenu : Node2D
 {
 	[Signal]
