@@ -9,12 +9,18 @@ public partial class TurnManager : RefCounted
 	[Signal]
 	public delegate void TurnStartEventHandler(int whoseTurn);
 
-	private enum TurnHavers { Allies, Player, Enemies };
-	private int _whoseTurn = (int)TurnHavers.Player;
-	private int _moveCount = 0;
-	private int _actionCount = 0;
+	private enum TurnHavers { Player, Enemies };
+	private int _whoseTurn;
+	private int _moveCount;
+	private int _actionCount;
 
-	public TurnManager() { }
+	public void Initialize()
+	{
+		_whoseTurn = (int)TurnHavers.Player;
+		_moveCount = 0;
+		_actionCount = 0;
+		EmitSignal("TurnStart", _whoseTurn);
+	}
 
 	public bool ShouldEndTurn()
 	{

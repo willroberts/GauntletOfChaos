@@ -1,17 +1,6 @@
 using Godot;
 using Godot.Collections;
 
-/*
-  public override void _Input(InputEvent @event)
-  {
-    if (@event is InputEventMouseButton btn && btn.ButtonIndex == MouseButton.Left)
-    {
-      if (btn.Pressed) { Input.SetCustomMouseCursor(_cursorClick); }
-      else { Input.SetCustomMouseCursor(_cursorDefault); }
-    }
-  }
-*/
-
 public partial class UIManager : Node2D
 {
 	[Signal]
@@ -21,10 +10,15 @@ public partial class UIManager : Node2D
 	private readonly Resource _cursorDefault = GD.Load("res://Assets/OpenGameArt/Cursor/cursor48.png");
 	private readonly Resource _cursorClick = GD.Load("res://Assets/OpenGameArt/Cursor/cursor48_down.png");
 	private PortalMenu _portalMenu;
+	private Label _turnPopup = new();
+	private Timer _turnPopupTimer = new();
+	private Theme _largeTextTheme = GD.Load("res://Resources/Themes/Londrina96.tres") as Theme;
 
 	public override void _Ready()
 	{
+		ZIndex = (int)ZOrder.UI;
 		InitializePortalMenu();
+		InitializeTurnPopupTimer();
 	}
 
 	public override void _Input(InputEvent @event)
@@ -43,6 +37,14 @@ public partial class UIManager : Node2D
 		_portalMenu.LevelSelected += OnLevelSelected;
 		HidePortalMenu();
 		AddChild(_portalMenu);
+	}
+
+	public void InitializeTurnPopupTimer()
+	{
+		_turnPopupTimer = new();
+		_turnPopupTimer.WaitTime = 2;
+		_turnPopupTimer.OneShot = true;
+		_turnPopupTimer.Timeout += OnTurnPopupTimerFinished;
 	}
 
 	public void SetPortalChoices(Dictionary<string, Level> choices)
@@ -73,9 +75,46 @@ public partial class UIManager : Node2D
 		//RemoveChild(_portalMenu);
 	}
 
+	public void ShowTurnPopup(string text)
+	{
+		GD.Print("Debug[UIManager:ShowTurnPopup] Showing turn popup with text: ", text);
+
+		// Draw text.
+		//_turnPopup.Theme = _largeTextTheme;
+		//_turnPopup.SetAnchorsPreset(Control.LayoutPreset.Center);
+		//_turnPopup.Position = new(450, 300); // Use x=395 for "Enemies' turn!" text.
+		//_turnPopup.ZIndex = (int)ZOrder.UI;
+		//_turnPopup.Text = text;
+		//AddChild(_turnPopup);
+
+		//_turnPopupTimer.Start();
+	}
+
+	private void OnTurnPopupTimerFinished()
+	{
+		RemoveChild(_turnPopup);
+	}
+
 	public void OnLevelSelected(Level targetLevel)
 	{
 		// Signal passthrough from LevelSelected to Main.
 		EmitSignal("LevelSelected", targetLevel);
+	}
+
+	public void OnTurnStart(int whoseTurn)
+	{
+		GD.Print("Debug[UIManager] Received TurnStart signal.");
+		switch (whoseTurn)
+		{
+			case 0:
+				ShowTurnPopup("Your turn!");
+				break;
+			case 1:
+				ShowTurnPopup("Enemies' turn!");
+				break;
+			default:
+				GD.Print("Debug[UIManager] Error: Invalid whoseTurn value ", whoseTurn);
+				break;
+		}
 	}
 }

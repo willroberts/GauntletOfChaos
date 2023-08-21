@@ -50,11 +50,21 @@ public partial class Main : Node2D
 		_uiManager = GetNode<UIManager>("UIManager");
 		_uiManager.LevelSelected += OnLevelSelected;
 
+		// Subscribe to turn start signals in the UI.
+		_turnManager.TurnStart += _uiManager.OnTurnStart;
+		_turnManager.TurnStart += OnTurnStart;
+
 		// Depends on TextureManager.
 		_boardManager = GetNode<BoardManager>("BoardManager");
 		_boardManager.InitializeBoard(HighlightTiles, PathTiles);
 		_boardManager.SetHighlightTilesEnabled(false);
 		_boardManager.MoveFinished += OnMoveFinished;
+	}
+
+	private void OnTurnStart(int whoseTurn)
+	{
+		GD.Print("Debug[Main:OnTurnStart] Received TurnStart signal.");
+		GD.Print("Debug[Main:OnTurnStart] Turn ID: ", whoseTurn);
 	}
 
 	private void OnMoveFinished(Vector2I cell)
@@ -126,6 +136,7 @@ public partial class Main : Node2D
 			return;
 		}
 
+		_turnManager.Initialize();
 		_player.SetIsInCombat(true);
 		_boardManager.SetHighlightTilesEnabled(true);
 	}

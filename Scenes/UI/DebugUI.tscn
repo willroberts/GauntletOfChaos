@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://cxrexoaboiu3u"]
+
+[ext_resource type="FontFile" path="res://Assets/Fonts/LondrinaOutline/LondrinaOutline-Regular.ttf" id="1_1nmj0"]
+
+[sub_resource type="Theme" id="Theme_ltjkj"]
+default_font = ExtResource("1_1nmj0")
+default_font_size = 128
+
+[node name="DebugUI" type="Node2D"]
+
+[node name="Label" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+offset_right = 241.0
+offset_bottom = 45.0
+theme = SubResource("Theme_ltjkj")
+text = "Enemies' Turn"
