@@ -1,5 +1,6 @@
 using Godot;
 using Godot.Collections;
+using OccupantMap = System.Collections.Generic.Dictionary<Godot.Vector2I, IOccupant>;
 
 public interface IOccupant
 {
@@ -37,7 +38,7 @@ public partial class BoardLayer : Node2D
 		Vector2I.Down
 	};
 
-	private System.Collections.Generic.Dictionary<Godot.Vector2I, IOccupant> _cellContents = new();
+	private OccupantMap _cellContents = new();
 	private IOccupant _selection = null;
 	private Array<Vector2I> _highlightCells = new();
 	private Pathfinder _pathfinder = null;
@@ -128,6 +129,12 @@ public partial class BoardLayer : Node2D
 	public void ClearCell(Vector2I cell)
 	{
 		if (_cellContents.ContainsKey(cell)) { _cellContents.Remove(cell); }
+	}
+
+	// Retrieve all occupants.
+	public OccupantMap GetAllOccupants()
+	{
+		return _cellContents;
 	}
 
 	// Remove all occupants from the layer.
