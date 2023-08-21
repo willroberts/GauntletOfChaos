@@ -74,7 +74,12 @@ public partial class BoardManager : Node2D
 	public void Initialize(Level level, TextureManager textureCache)
 	{
 		ClearBoard();
+		SpawnStaticContent(level, textureCache);
+		SpawnDynamicContent(level, textureCache);
+	}
 
+	private void SpawnStaticContent(Level level, TextureManager textureCache)
+	{
 		foreach (Vector2I cell in level.GetTerrainTiles())
 		{
 			Terrain t = new(cell);
@@ -88,6 +93,10 @@ public partial class BoardManager : Node2D
 			AddOccupant(n, cell);
 			//AddChild(n); // Disabled: NPCs don't have textures yet.
 		}
+	}
+
+	private void SpawnDynamicContent(Level level, TextureManager textureCache)
+	{
 		foreach (Vector2I cell in level.GetEnemyTiles())
 		{
 			Enemy e = new(cell, textureCache.Get("enemy_rat"));
