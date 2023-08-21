@@ -21,6 +21,7 @@ public partial class Main : Node2D
 
 	private ActionManager _actionManager;
 	private BoardManager _boardManager;
+	private DungeonManager _dungeonManager;
 	private LevelManager _levelManager;
 	private TextureManager _textureManager;
 	private UIManager _uiManager;
@@ -44,6 +45,7 @@ public partial class Main : Node2D
 	{
 		// Initialize managers with no dependencies first.
 		_actionManager = GetNode<ActionManager>("ActionManager");
+		_dungeonManager = GetNode<DungeonManager>("DungeonManager");
 		_levelManager = GetNode<LevelManager>("LevelManager");
 		_levelManager.LevelChanged += OnLevelChanged;
 		_textureManager = GetNode<TextureManager>("TextureManager");
