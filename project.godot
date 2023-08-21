@@ -23,7 +23,7 @@ mouse_cursor/custom_image="res://Assets/OpenGameArt/Cursor/cursor48.png"
 
 [dotnet]
 
-project/assembly_name="TrialOfChaos"
+project/assembly_name="GauntletOfChaos"
 
 [filesystem]
 
