@@ -1,8 +1,5 @@
 using Godot;
 using Godot.Collections;
-using System.Text.Json;
-using OccupantMap = System.Collections.Generic.Dictionary<Godot.Vector2I, IOccupant>;
-using SerializedMap = System.Collections.Generic.Dictionary<string, IOccupant>;
 
 public interface IOccupant
 {
@@ -40,53 +37,11 @@ public partial class BoardLayer : Node2D
 		Vector2I.Down
 	};
 
-	private OccupantMap _cellContents = new();
+	private System.Collections.Generic.Dictionary<Godot.Vector2I, IOccupant> _cellContents = new();
 	private IOccupant _selection = null;
 	private Array<Vector2I> _highlightCells = new();
 	private Pathfinder _pathfinder = null;
 	private Array<Vector2I> _currentPath = new();
-
-	/*
-	* Serialization
-	*/
-
-	// FIXME: Cannot serialize Dictionary with Godot.Vector2I keys.
-	// FIXME: Cannot serialize Interface types.
-	public string Serialize()
-	{
-		// First, convert the keys to strings.
-		SerializedMap sm = new();
-		foreach ((Vector2I key, IOccupant value) in _cellContents)
-		{
-			string newKey = $"{key.X},{key.Y}"; // Vector2I(1, 2) becomes "1,2".
-			sm[newKey] = value;
-		}
-
-		// Next, serialize the dictionary.
-		// TODO: Consider SerializeToUtf8Bytes (5-10% faster).
-		string result = JsonSerializer.Serialize(sm);
-		GD.Print("Serialized board: ", result);
-		return result;
-	}
-
-	public void Deserialize(string serialized)
-	{
-		// First, deserialize the string.
-		SerializedMap sm = JsonSerializer.Deserialize<SerializedMap>(serialized);
-
-		// Then, convert the keys to Godot.Vector2I values.
-		OccupantMap tmp = new();
-		foreach ((string key, IOccupant value) in sm)
-		{
-			string[] coords = key.Split(",");
-			Vector2I newKey = new(coords[0].ToInt(), coords[1].ToInt());
-			tmp[newKey] = value;
-		}
-
-		// Finally, assign the value back.
-		GD.Print("Deserialized: ", tmp);
-		//_cellContents = tmp;
-	}
 
 	/*
 	* Occupant methods
