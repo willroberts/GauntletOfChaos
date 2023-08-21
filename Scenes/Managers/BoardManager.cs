@@ -41,7 +41,7 @@ public partial class BoardManager : Node2D
 	* Board management
 	*/
 
-	public void InitializeBoard(TileMap highlightTiles, TileMap pathTiles)
+	public void ConfigureTiles(TileMap highlightTiles, TileMap pathTiles)
 	{
 		if (highlightTiles != null)
 		{
@@ -71,7 +71,7 @@ public partial class BoardManager : Node2D
 		}
 	}
 
-	public void PopulateBoard(Level level, TextureManager textureCache)
+	public void Initialize(Level level, TextureManager textureCache)
 	{
 		ClearBoard();
 

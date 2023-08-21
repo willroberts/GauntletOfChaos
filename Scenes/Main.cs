@@ -58,7 +58,7 @@ public partial class Main : Node2D
 
 		// Depends on TextureManager.
 		_boardManager = GetNode<BoardManager>("BoardManager");
-		_boardManager.InitializeBoard(HighlightTiles, PathTiles);
+		_boardManager.ConfigureTiles(HighlightTiles, PathTiles);
 		_boardManager.SetHighlightTilesEnabled(false);
 		_boardManager.MoveFinished += OnMoveFinished;
 	}
@@ -162,7 +162,7 @@ public partial class Main : Node2D
 		GD.Print("Debug[Main:OnLevelChanged]: --------------");
 
 		Level level = _levelManager.GetCurrentLevel();
-		_boardManager.PopulateBoard(level, _textureManager);
+		_boardManager.Initialize(level, _textureManager);
 		_uiManager.SetPortalChoices(level.GetPortalConnections());
 		_player.Move(level.GetPlayerStart());
 		_boardManager.AddOccupant(_player, level.GetPlayerStart());
