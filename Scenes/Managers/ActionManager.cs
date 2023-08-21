@@ -27,7 +27,7 @@ public partial class ActionManager : Node2D
 			else if (neighbor is Switch)
 			{
 				actions["switch"].Add(cell);
-				GD.Print("Debug[ActionManager]: You can operate a switch at ", cell);
+				GD.Print("Debug[ActionManager]: You can activate a switch at ", cell);
 			}
 		}
 
