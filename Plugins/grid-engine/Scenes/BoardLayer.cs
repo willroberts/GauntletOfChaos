@@ -1,6 +1,8 @@
 using Godot;
 using Godot.Collections;
-using System.Collections.Generic;
+using System.Text.Json;
+using OccupantMap = System.Collections.Generic.Dictionary<Godot.Vector2I, IOccupant>;
+using SerializedMap = System.Collections.Generic.Dictionary<string, IOccupant>;
 
 public interface IOccupant
 {
@@ -38,35 +40,52 @@ public partial class BoardLayer : Node2D
 		Vector2I.Down
 	};
 
-	private readonly System.Collections.Generic.Dictionary<Vector2I, IOccupant> _cellContents = new();
+	private OccupantMap _cellContents = new();
 	private IOccupant _selection = null;
 	private Array<Vector2I> _highlightCells = new();
 	private Pathfinder _pathfinder = null;
 	private Array<Vector2I> _currentPath = new();
 
-	public void HandleHover(Vector2I newCell)
-	{
-		if (_selection == null) { return; }
+	/*
+	* Serialization
+	*/
 
-		DrawPath(_selection.GetCell(), newCell);
-	}
-
-	public void HandleClick(Vector2I cell)
+	// FIXME: Cannot serialize Dictionary with Godot.Vector2I keys.
+	// FIXME: Cannot serialize Interface types.
+	public string Serialize()
 	{
-		if (_selection == null)
+		// First, convert the keys to strings.
+		SerializedMap sm = new();
+		foreach ((Vector2I key, IOccupant value) in _cellContents)
 		{
-			Select(cell);
-			return;
+			string newKey = $"{key.X},{key.Y}"; // Vector2I(1, 2) becomes "1,2".
+			sm[newKey] = value;
 		}
 
-		if (_selection.ReadyToMove()) { MoveSelection(cell); }
+		// Next, serialize the dictionary.
+		// TODO: Consider SerializeToUtf8Bytes (5-10% faster).
+		string result = JsonSerializer.Serialize(sm);
+		GD.Print("Serialized board: ", result);
+		return result;
 	}
 
-	public void HandleCancel()
+	public void Deserialize(string serialized)
 	{
-		ClearHighlight();
-		ClearPath();
-		ClearSelection();
+		// First, deserialize the string.
+		SerializedMap sm = JsonSerializer.Deserialize<SerializedMap>(serialized);
+
+		// Then, convert the keys to Godot.Vector2I values.
+		OccupantMap tmp = new();
+		foreach ((string key, IOccupant value) in sm)
+		{
+			string[] coords = key.Split(",");
+			Vector2I newKey = new(coords[0].ToInt(), coords[1].ToInt());
+			tmp[newKey] = value;
+		}
+
+		// Finally, assign the value back.
+		GD.Print("Deserialized: ", tmp);
+		//_cellContents = tmp;
 	}
 
 	/*
@@ -160,10 +179,35 @@ public partial class BoardLayer : Node2D
 	public void Clear()
 	{
 		_cellContents.Clear();
-		//_selection = null;
-		//_highlightCells.Clear();
-		//_pathfinder = null;
-		//_currentPath.Clear();
+	}
+
+	/*
+	* Input handlers
+	*/
+
+	public void HandleHover(Vector2I newCell)
+	{
+		if (_selection == null) { return; }
+
+		DrawPath(_selection.GetCell(), newCell);
+	}
+
+	public void HandleClick(Vector2I cell)
+	{
+		if (_selection == null)
+		{
+			Select(cell);
+			return;
+		}
+
+		if (_selection.ReadyToMove()) { MoveSelection(cell); }
+	}
+
+	public void HandleCancel()
+	{
+		ClearHighlight();
+		ClearPath();
+		ClearSelection();
 	}
 
 	/*
