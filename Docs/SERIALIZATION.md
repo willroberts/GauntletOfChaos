@@ -19,7 +19,7 @@ serialized.
 The hierarchy for a Dungeon serialized in JSON might look like this:
 
 - Dungeon
-  - Rooms
+  - Rooms (each subkey contains an array of cell indices in int format)
     - Enemies (destroyed? simply don't include them)
 	- Chests
 	- OpenedChests (still rendered, not interactable)
