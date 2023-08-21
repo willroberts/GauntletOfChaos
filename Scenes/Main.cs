@@ -162,7 +162,7 @@ public partial class Main : Node2D
 		GD.Print("Debug[Main:OnLevelChanged]: --------------");
 
 		Level level = _levelManager.GetCurrentLevel();
-		_boardManager.Initialize(level, _textureManager);
+		_boardManager.InitializeBoard(level, _textureManager);
 		_uiManager.SetPortalChoices(level.GetPortalConnections());
 		_player.Move(level.GetPlayerStart());
 		_boardManager.AddOccupant(_player, level.GetPlayerStart());

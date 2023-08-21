@@ -1,5 +1,8 @@
 using Godot;
 using System.Collections.Generic;
+using System.Text.Json;
+using NativeDict = System.Collections.Generic.Dictionary<Godot.Vector2I, IOccupant>;
+using SerializableDict = System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<int>>;
 
 public partial class BoardManager : Node2D
 {
@@ -38,6 +41,102 @@ public partial class BoardManager : Node2D
 	}
 
 	/*
+	* Serialization
+	*/
+
+	// Serialize the current Board as a JSON string.
+	public string Serialize()
+	{
+		// Define arrays to store cell coordinates for various occupant types.
+		List<int> enemyCells = new();
+		List<int> chestCells = new();
+		List<int> openedChestCells = new();
+		List<int> switchCells = new();
+		List<int> activatedSwitchCells = new();
+		List<int> gateCells = new();
+
+		// Iterate the board, appending coordinates to the above arrays.
+		foreach ((Vector2I key, IOccupant value) in _unitLayer.GetAllOccupants())
+		{
+			// TODO: Differentiate enemies? Or let them spawn randomly on load?
+			if (value is Enemy) { enemyCells.Add(_grid.ToIndex(key)); }
+			else if (value is Chest c)
+			{
+				if (!c.IsOpened()) { chestCells.Add(_grid.ToIndex(key)); }
+				else { openedChestCells.Add(_grid.ToIndex(key)); }
+			}
+			else if (value is Switch s)
+			{
+				if (!s.IsActivated()) { switchCells.Add(_grid.ToIndex(key)); }
+				else { activatedSwitchCells.Add(_grid.ToIndex(key)); }
+			}
+			else if (value is Gate g)
+			{
+				if (!g.IsOpened()) { gateCells.Add(_grid.ToIndex(key)); }
+			}
+		}
+
+		// Assemble the arrays into a string-keyed dictionary.
+		SerializableDict assembled = new(){
+			{ "enemies", enemyCells },
+			{ "chests", chestCells },
+			{ "openedChests", openedChestCells },
+			{ "switches", switchCells },
+			{ "activatedSwitches", activatedSwitchCells },
+			{ "gates", gateCells }
+		};
+
+		// Serialize and return the dictionary.
+		return JsonSerializer.Serialize(assembled);
+	}
+
+	public NativeDict Deserialize(string serialized)
+	{
+		SerializableDict input = JsonSerializer.Deserialize<SerializableDict>(serialized);
+		NativeDict result = new();
+
+		// Convert the serializable format back to what we use in the Grid engine.
+		foreach ((string key, List<int> values) in input)
+		{
+			foreach (int v in values)
+			{
+				Vector2I cell = _grid.FromIndex(v);
+				switch (key)
+				{
+					case "enemies":
+						result[cell] = new Enemy(cell, null); // FIXME: Texture.
+						break;
+					case "chests":
+						result[cell] = new Chest(cell, null); // FIXME: Texture.
+						break;
+					case "openedChests":
+						Chest c = new(cell, null); // FIXME: Texture.
+						c.SetIsOpened(true);
+						result[cell] = c;
+						break;
+					case "switches":
+						result[cell] = new Switch(cell, null); // FIXME: Texture.
+						break;
+					case "activatedSwitches":
+						Switch s = new(cell, null); // FIXME: Texture.
+						s.SetIsActivated(true);
+						result[cell] = s;
+						break;
+					case "gates":
+						result[cell] = new Gate(cell, null); // FIXME: Texture;
+						break;
+					default:
+						GD.Print("Error: Unknown deserialization key ", key);
+						break;
+				}
+			}
+		}
+
+		// TODO: Apply this to the board instead of returning a value.
+		return result;
+	}
+
+	/*
 	* Board management
 	*/
 
@@ -71,7 +170,7 @@ public partial class BoardManager : Node2D
 		}
 	}
 
-	public void Initialize(Level level, TextureManager textureCache)
+	public void InitializeBoard(Level level, TextureManager textureCache)
 	{
 		ClearBoard();
 		SpawnStaticContent(level, textureCache);
