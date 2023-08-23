@@ -13,6 +13,6 @@ public partial class Enemy : Unit, IOccupant
 	{
 		Vector2I targetCell = Vector2I.Zero;
 		Move(targetCell);
-		Attack();
+		//Attack();
 	}
 }
