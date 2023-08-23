@@ -7,7 +7,7 @@ public partial class TextureManager : RefCounted
 
 	public TextureManager()
 	{
-		Initialize();
+		InitializeCache();
 	}
 
 	public Texture2D Get(string textureName)
@@ -21,7 +21,7 @@ public partial class TextureManager : RefCounted
 		return _textureCache[textureName];
 	}
 
-	public void Initialize()
+	public void InitializeCache()
 	{
 		// Player.
 		_textureCache.Add("player_knight", LoadTexture("Assets/TinyDungeon/Tiles/tile_0097.png"));

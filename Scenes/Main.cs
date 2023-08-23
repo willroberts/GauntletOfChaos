@@ -24,7 +24,7 @@ public partial class Main : Node2D
 	private LevelManager _levelManager = new();
 	private PlayerManager _playerManager = new();
 	private TextureManager _textureManager = new();
-	private TurnManager _turnManager = new();
+	private CombatManager _combatManager = new();
 	private UIManager _uiManager = new();
 
 	public override void _Ready()
@@ -38,8 +38,8 @@ public partial class Main : Node2D
 		// Configure signals.
 		_levelManager.LevelChanged += OnLevelChanged;
 		_uiManager.LevelSelected += OnLevelSelected;
-		_turnManager.TurnStart += _uiManager.OnTurnStart;
-		_turnManager.TurnStart += OnTurnStart;
+		_combatManager.TurnStart += _uiManager.OnTurnStart;
+		_combatManager.TurnStart += OnTurnStart;
 		_boardManager.MoveFinished += OnMoveFinished;
 
 		// Configure the board.
@@ -125,7 +125,6 @@ public partial class Main : Node2D
 			return;
 		}
 
-		_turnManager.Initialize();
 		_playerManager.Get().SetIsInCombat(true);
 		_boardManager.SetHighlightTilesEnabled(true);
 	}

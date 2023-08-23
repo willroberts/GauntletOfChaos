@@ -14,7 +14,7 @@ public partial class UIManager : Node2D
 	private Timer _turnPopupTimer = new();
 	private Theme _largeTextTheme = GD.Load("res://Resources/Themes/Londrina96.tres") as Theme;
 
-	public override void _Ready()
+	public UIManager()
 	{
 		ZIndex = (int)ZOrder.UI;
 		InitializePortalMenu();
@@ -54,8 +54,6 @@ public partial class UIManager : Node2D
 			GD.Print("Error: Cannot have more than 3 choices in portal menu.");
 			return;
 		}
-
-		if (_portalMenu == null) { InitializePortalMenu(); }
 
 		int i = 0;
 		foreach ((string name, Level level) in choices)
