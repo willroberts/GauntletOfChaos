@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://dpxuu6425frma"]
+[gd_scene load_steps=15 format=3 uid="uid://dpxuu6425frma"]
 
 [ext_resource type="Script" path="res://Scenes/Main.cs" id="1_e3874"]
 [ext_resource type="PackedScene" uid="uid://bmbj88e2khni4" path="res://Scenes/Levels/Town.tscn" id="2_ilp7o"]
@@ -8,7 +8,6 @@
 [ext_resource type="PackedScene" uid="uid://yd7y5w18uykq" path="res://Scenes/Managers/TextureManager.tscn" id="5_h63nj"]
 [ext_resource type="PackedScene" uid="uid://1ehp1w536jk7" path="res://Scenes/Managers/DungeonManager.tscn" id="6_ttt4y"]
 [ext_resource type="PackedScene" uid="uid://bput6wfpyrmqm" path="res://Scenes/Managers/LevelManager.tscn" id="7_3don8"]
-[ext_resource type="PackedScene" uid="uid://dvn4rwpvj6psv" path="res://Scenes/Managers/ActionManager.tscn" id="7_fdk0c"]
 [ext_resource type="PackedScene" uid="uid://bf5qaol55kbxm" path="res://Scenes/Managers/PlayerManager.tscn" id="8_nsv1s"]
 [ext_resource type="PackedScene" uid="uid://byv01y75uihrf" path="res://Scenes/Managers/UIManager.tscn" id="8_xpx05"]
 
@@ -95,8 +94,6 @@ format = 2
 scale = Vector2(2, 2)
 tile_set = SubResource("TileSet_uvdqe")
 format = 2
-
-[node name="ActionManager" parent="." instance=ExtResource("7_fdk0c")]
 
 [node name="DungeonManager" parent="." instance=ExtResource("6_ttt4y")]
 
