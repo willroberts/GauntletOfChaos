@@ -19,13 +19,13 @@ public partial class Main : Node2D
 	[Export]
 	public bool EnableDebugMode = false;
 
-	private ActionManager _actionManager;
 	private BoardManager _boardManager;
 	private DungeonManager _dungeonManager;
 	private LevelManager _levelManager;
 	private TextureManager _textureManager;
 	private UIManager _uiManager;
 	private TurnManager _turnManager = new();
+	private PlayerManager _playerManager;
 
 	// FIXME: Move to PlayerManager.
 	private Player _player;
@@ -44,7 +44,6 @@ public partial class Main : Node2D
 	private void InitializeManagers()
 	{
 		// Initialize managers with no dependencies first.
-		_actionManager = GetNode<ActionManager>("ActionManager");
 		_dungeonManager = GetNode<DungeonManager>("DungeonManager");
 		_levelManager = GetNode<LevelManager>("LevelManager");
 		_levelManager.LevelChanged += OnLevelChanged;
@@ -61,6 +60,7 @@ public partial class Main : Node2D
 		_boardManager.ConfigureTiles(HighlightTiles, PathTiles);
 		_boardManager.SetHighlightTilesEnabled(false);
 		_boardManager.MoveFinished += OnMoveFinished;
+		_playerManager = GetNode<PlayerManager>("PlayerManager");
 	}
 
 	private void OnTurnStart(int whoseTurn)
@@ -98,7 +98,7 @@ public partial class Main : Node2D
 		}
 
 		// Determine which actions the player can take.
-		_actionManager.GetActions(_boardManager.GetNeighboringOccupants(cell));
+		_playerManager.GetActions(_boardManager.GetNeighboringOccupants(cell));
 	}
 
 	private void OnLevelSelected(Level targetLevel)
