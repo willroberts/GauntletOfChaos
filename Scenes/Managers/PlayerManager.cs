@@ -4,6 +4,7 @@ using Godot.Collections;
 public partial class PlayerManager : Node2D
 {
 	private Player _player;
+	private InventoryManager _inventory = new();
 
 	public void Create(Vector2I cell, Texture2D texture)
 	{
