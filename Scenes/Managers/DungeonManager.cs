@@ -13,7 +13,7 @@ public partial class RoomState : RefCounted
 }
 
 // DungeonManager is responsible for tracking the state of rooms in a Dungeon.
-public partial class DungeonManager : Node2D
+public partial class DungeonManager : RefCounted
 {
 	private Dictionary<string, RoomState> _stateMap;
 

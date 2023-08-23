@@ -1,11 +1,11 @@
 using Godot;
 using Godot.Collections;
 
-public partial class TextureManager : Node2D
+public partial class TextureManager : RefCounted
 {
 	private Dictionary<string, Texture2D> _textureCache = new();
 
-	public override void _Ready()
+	public TextureManager()
 	{
 		Initialize();
 	}
@@ -34,11 +34,6 @@ public partial class TextureManager : Node2D
 		_textureCache.Add("enemy_bat", LoadTexture("Assets/TinyDungeon/Tiles/tile_0120.png"));
 		_textureCache.Add("enemy_spider", LoadTexture("Assets/TinyDungeon/Tiles/tile_0122.png"));
 		_textureCache.Add("enemy_rat", LoadTexture("Assets/TinyDungeon/Tiles/tile_0123.png"));
-	}
-
-	public bool IsEmpty()
-	{
-		return _textureCache.Count == 0;
 	}
 
 	private static Texture2D LoadTexture(string filename)

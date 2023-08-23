@@ -47,7 +47,6 @@ public partial class Main : Node2D
 		_boardManager.SetHighlightTilesEnabled(false);
 
 		// Create the player.
-		if (_textureManager.IsEmpty()) { _textureManager.Initialize(); }
 		_playerManager.Create(Vector2I.Zero, _textureManager.Get("player_knight"));
 
 		// Add renderable components as children.
