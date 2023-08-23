@@ -55,6 +55,8 @@ public partial class UIManager : Node2D
 			return;
 		}
 
+		if (_portalMenu == null) { InitializePortalMenu(); }
+
 		int i = 0;
 		foreach ((string name, Level level) in choices)
 		{

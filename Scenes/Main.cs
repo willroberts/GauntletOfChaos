@@ -53,6 +53,12 @@ public partial class Main : Node2D
 		// Configure the board.
 		_boardManager.ConfigureTiles(HighlightTiles, PathTiles);
 		_boardManager.SetHighlightTilesEnabled(false);
+
+		// Add renderable components as children.
+		AddChild(_boardManager); // Handles input.
+		AddChild(_levelManager); // Renders levels.
+		AddChild(_playerManager); // Renders the player.
+		AddChild(_uiManager); // Renders UI elements.
 	}
 
 	private void OnTurnStart(int whoseTurn)
@@ -101,6 +107,7 @@ public partial class Main : Node2D
 
 	private void CreatePlayer()
 	{
+		if (_textureManager.IsEmpty()) { _textureManager.Initialize(); }
 		_player = new(Vector2I.Zero, _textureManager.Get("player_knight"));
 		AddChild(_player);
 	}
