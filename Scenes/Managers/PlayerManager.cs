@@ -3,7 +3,26 @@ using Godot.Collections;
 
 public partial class PlayerManager : Node2D
 {
-	public Dictionary<string, Array<Vector2I>> GetActions(System.Collections.Generic.Dictionary<Vector2I, IOccupant> neighbors)
+	private Player _player;
+
+	public void Create(Vector2I cell, Texture2D texture)
+	{
+		if (_player != null)
+		{
+			GD.Print("Error: Player already exists!");
+			return;
+		}
+
+		_player = new(cell, texture);
+		AddChild(_player);
+	}
+
+	public Player Get()
+	{
+		return _player;
+	}
+
+	public static Dictionary<string, Array<Vector2I>> GetActions(System.Collections.Generic.Dictionary<Vector2I, IOccupant> neighbors)
 	{
 		Dictionary<string, Array<Vector2I>> actions = new()
 		{

@@ -27,17 +27,9 @@ public partial class Main : Node2D
 	private TurnManager _turnManager = new();
 	private UIManager _uiManager = new();
 
-	// FIXME: Move to PlayerManager.
-	private Player _player;
-
 	public override void _Ready()
 	{
 		InitializeManagers();
-		if (_player == null)
-		{
-			// Depends on BoardManager, TextureManager.
-			CreatePlayer();
-		}
 		_levelManager.ChangeLevel(InitialLevel.Instantiate() as Level);
 	}
 
@@ -53,6 +45,10 @@ public partial class Main : Node2D
 		// Configure the board.
 		_boardManager.ConfigureTiles(HighlightTiles, PathTiles);
 		_boardManager.SetHighlightTilesEnabled(false);
+
+		// Create the player.
+		if (_textureManager.IsEmpty()) { _textureManager.Initialize(); }
+		_playerManager.Create(Vector2I.Zero, _textureManager.Get("player_knight"));
 
 		// Add renderable components as children.
 		AddChild(_boardManager);  // Handles input.
@@ -75,7 +71,7 @@ public partial class Main : Node2D
 	private void ProcessPlayerMove(Vector2I cell)
 	{
 		// Update the Player's cell and screen position.
-		_player.Move(cell);
+		_playerManager.Get().Move(cell);
 
 		// Show the dungeon select menu when a portal tile is entered.
 		if (_levelManager.GetCurrentLevel().GetPortalTiles().Contains(cell))
@@ -96,20 +92,13 @@ public partial class Main : Node2D
 		}
 
 		// Determine which actions the player can take.
-		_playerManager.GetActions(_boardManager.GetNeighboringOccupants(cell));
+		PlayerManager.GetActions(_boardManager.GetNeighboringOccupants(cell));
 	}
 
 	private void OnLevelSelected(Level targetLevel)
 	{
 		_uiManager.HidePortalMenu();
 		_levelManager.ChangeLevel(targetLevel);
-	}
-
-	private void CreatePlayer()
-	{
-		if (_textureManager.IsEmpty()) { _textureManager.Initialize(); }
-		_player = new(Vector2I.Zero, _textureManager.Get("player_knight"));
-		AddChild(_player);
 	}
 
 	private static Level LevelFromFile(string filename)
@@ -131,26 +120,26 @@ public partial class Main : Node2D
 
 	private void StartCombat()
 	{
-		if (_player == null || _boardManager == null)
+		if (_playerManager == null || _boardManager == null)
 		{
 			GD.Print("Error: Cannot start combat due to nullptr.");
 			return;
 		}
 
 		_turnManager.Initialize();
-		_player.SetIsInCombat(true);
+		_playerManager.Get().SetIsInCombat(true);
 		_boardManager.SetHighlightTilesEnabled(true);
 	}
 
 	private void EndCombat()
 	{
-		if (_player == null || _boardManager == null)
+		if (_playerManager == null || _boardManager == null)
 		{
 			GD.Print("Error: Cannot end combat due to nullptr.");
 			return;
 		}
 
-		_player.SetIsInCombat(false);
+		_playerManager.Get().SetIsInCombat(false);
 		_boardManager.SetHighlightTilesEnabled(false);
 	}
 
@@ -163,10 +152,10 @@ public partial class Main : Node2D
 		Level level = _levelManager.GetCurrentLevel();
 		_boardManager.InitializeBoard(level, _textureManager);
 		_uiManager.SetPortalChoices(level.GetPortalConnections());
-		_player.Move(level.GetPlayerStart());
-		_boardManager.AddOccupant(_player, level.GetPlayerStart());
+		_playerManager.Get().Move(level.GetPlayerStart());
+		_boardManager.AddOccupant(_playerManager.Get(), level.GetPlayerStart());
 
-		GD.Print("Debug[Main:OnLevelChanged]: Set player cell to ", _player.GetCell());
+		GD.Print("Debug[Main:OnLevelChanged]: Set player cell to ", _playerManager.Get().GetCell());
 		GD.Print("Debug[Main:OnLevelChanged]: Added player to board at ", level.GetPlayerStart());
 
 		if (level.GetEnemyTiles().Count > 0) { StartCombat(); }
