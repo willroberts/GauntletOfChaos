@@ -15,14 +15,4 @@ public partial class Enemy : Unit, IOccupant
 		Move(targetCell);
 		Attack();
 	}
-
-	public void Move(Vector2I targetCell)
-	{
-
-	}
-
-	public void Attack()
-	{
-
-	}
 }
