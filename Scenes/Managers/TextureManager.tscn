@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://yd7y5w18uykq"]
-
-[ext_resource type="Script" path="res://Scenes/Managers/TextureManager.cs" id="1_udhp8"]
-
-[node name="TextureManager" type="Node2D"]
-script = ExtResource("1_udhp8")

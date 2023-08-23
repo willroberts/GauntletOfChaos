@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://dqdbg3f43lebr"]
-
-[ext_resource type="Script" path="res://Scenes/Managers/BoardManager.cs" id="1_bfkgw"]
-
-[node name="BoardManager" type="Node2D"]
-script = ExtResource("1_bfkgw")

@@ -19,13 +19,13 @@ public partial class Main : Node2D
 	[Export]
 	public bool EnableDebugMode = false;
 
-	private BoardManager _boardManager;
-	private DungeonManager _dungeonManager;
-	private LevelManager _levelManager;
-	private TextureManager _textureManager;
-	private UIManager _uiManager;
+	private BoardManager _boardManager = new();
+	private DungeonManager _dungeonManager = new();
+	private LevelManager _levelManager = new();
+	private PlayerManager _playerManager = new();
+	private TextureManager _textureManager = new();
 	private TurnManager _turnManager = new();
-	private PlayerManager _playerManager;
+	private UIManager _uiManager = new();
 
 	// FIXME: Move to PlayerManager.
 	private Player _player;
@@ -43,24 +43,16 @@ public partial class Main : Node2D
 
 	private void InitializeManagers()
 	{
-		// Initialize managers with no dependencies first.
-		_dungeonManager = GetNode<DungeonManager>("DungeonManager");
-		_levelManager = GetNode<LevelManager>("LevelManager");
+		// Configure signals.
 		_levelManager.LevelChanged += OnLevelChanged;
-		_textureManager = GetNode<TextureManager>("TextureManager");
-		_uiManager = GetNode<UIManager>("UIManager");
 		_uiManager.LevelSelected += OnLevelSelected;
-
-		// Subscribe to turn start signals in the UI.
 		_turnManager.TurnStart += _uiManager.OnTurnStart;
 		_turnManager.TurnStart += OnTurnStart;
+		_boardManager.MoveFinished += OnMoveFinished;
 
-		// Depends on TextureManager.
-		_boardManager = GetNode<BoardManager>("BoardManager");
+		// Configure the board.
 		_boardManager.ConfigureTiles(HighlightTiles, PathTiles);
 		_boardManager.SetHighlightTilesEnabled(false);
-		_boardManager.MoveFinished += OnMoveFinished;
-		_playerManager = GetNode<PlayerManager>("PlayerManager");
 	}
 
 	private void OnTurnStart(int whoseTurn)

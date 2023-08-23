@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://1ehp1w536jk7"]
-
-[ext_resource type="Script" path="res://Scenes/Managers/DungeonManager.cs" id="1_70a1i"]
-
-[node name="DungeonManager" type="Node2D"]
-script = ExtResource("1_70a1i")

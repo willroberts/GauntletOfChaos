@@ -1,15 +1,9 @@
-[gd_scene load_steps=15 format=3 uid="uid://dpxuu6425frma"]
+[gd_scene load_steps=9 format=3 uid="uid://dpxuu6425frma"]
 
 [ext_resource type="Script" path="res://Scenes/Main.cs" id="1_e3874"]
 [ext_resource type="PackedScene" uid="uid://bmbj88e2khni4" path="res://Scenes/Levels/Town.tscn" id="2_ilp7o"]
 [ext_resource type="Texture2D" uid="uid://dlpe6rpb3rga1" path="res://Assets/FirstParty/pathTiles2.png" id="4_of87t"]
 [ext_resource type="Texture2D" uid="uid://3t6xprdo26aw" path="res://Assets/FirstParty/highlightTiles.png" id="4_tv5o7"]
-[ext_resource type="PackedScene" uid="uid://dqdbg3f43lebr" path="res://Scenes/Managers/BoardManager.tscn" id="5_bhfxv"]
-[ext_resource type="PackedScene" uid="uid://yd7y5w18uykq" path="res://Scenes/Managers/TextureManager.tscn" id="5_h63nj"]
-[ext_resource type="PackedScene" uid="uid://1ehp1w536jk7" path="res://Scenes/Managers/DungeonManager.tscn" id="6_ttt4y"]
-[ext_resource type="PackedScene" uid="uid://bput6wfpyrmqm" path="res://Scenes/Managers/LevelManager.tscn" id="7_3don8"]
-[ext_resource type="PackedScene" uid="uid://bf5qaol55kbxm" path="res://Scenes/Managers/PlayerManager.tscn" id="8_nsv1s"]
-[ext_resource type="PackedScene" uid="uid://byv01y75uihrf" path="res://Scenes/Managers/UIManager.tscn" id="8_xpx05"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xl7cd"]
 texture = ExtResource("4_tv5o7")
@@ -94,15 +88,3 @@ format = 2
 scale = Vector2(2, 2)
 tile_set = SubResource("TileSet_uvdqe")
 format = 2
-
-[node name="DungeonManager" parent="." instance=ExtResource("6_ttt4y")]
-
-[node name="LevelManager" parent="." instance=ExtResource("7_3don8")]
-
-[node name="TextureManager" parent="." instance=ExtResource("5_h63nj")]
-
-[node name="UIManager" parent="." instance=ExtResource("8_xpx05")]
-
-[node name="BoardManager" parent="." instance=ExtResource("5_bhfxv")]
-
-[node name="PlayerManager" parent="." instance=ExtResource("8_nsv1s")]
