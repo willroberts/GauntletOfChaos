@@ -55,10 +55,10 @@ public partial class Main : Node2D
 		_boardManager.SetHighlightTilesEnabled(false);
 
 		// Add renderable components as children.
-		AddChild(_boardManager); // Handles input.
-		AddChild(_levelManager); // Renders levels.
+		AddChild(_boardManager);  // Handles input.
+		AddChild(_levelManager);  // Renders levels.
 		AddChild(_playerManager); // Renders the player.
-		AddChild(_uiManager); // Renders UI elements.
+		AddChild(_uiManager);     // Renders UI elements.
 	}
 
 	private void OnTurnStart(int whoseTurn)
