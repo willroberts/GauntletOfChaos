@@ -20,6 +20,9 @@ public interface IOccupant
 public partial class BoardLayer : Node2D
 {
 	[Signal]
+	public delegate void MoveStartedEventHandler(Vector2I newCell);
+
+	[Signal]
 	public delegate void MoveFinishedEventHandler(Vector2I newCell);
 
 	[Export]
@@ -66,9 +69,9 @@ public partial class BoardLayer : Node2D
 
 	// Given a cell, return any occupants in the four cardinal directions from
 	// that cell.
-	public System.Collections.Generic.Dictionary<Vector2I, IOccupant> GetNeighbors(Vector2I cell)
+	public OccupantMap GetNeighbors(Vector2I cell)
 	{
-		System.Collections.Generic.Dictionary<Vector2I, IOccupant> result = new();
+		OccupantMap result = new();
 		foreach (Vector2I direction in Directions)
 		{
 			Vector2I targetCell = cell + direction;
@@ -108,6 +111,8 @@ public partial class BoardLayer : Node2D
 
 	public void MoveSelection(Vector2I newCell)
 	{
+		EmitSignal("MoveStarted", newCell);
+
 		if (IsOccupied(newCell) || !_highlightCells.Contains(newCell)) { return; }
 
 		_cellContents.Remove(_selection.GetCell());

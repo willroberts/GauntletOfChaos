@@ -117,28 +117,16 @@ public partial class Main : Node2D
 		return level.Instantiate() as Level;
 	}
 
-	private void StartCombat()
+	private void SetCombatEnabled(bool value)
 	{
 		if (_playerManager == null || _boardManager == null)
 		{
-			GD.Print("Error: Cannot start combat due to nullptr.");
+			GD.Print("Error: Cannot toggle combat due to nullptr.");
 			return;
 		}
 
-		_playerManager.Get().SetIsInCombat(true);
-		_boardManager.SetHighlightTilesEnabled(true);
-	}
-
-	private void EndCombat()
-	{
-		if (_playerManager == null || _boardManager == null)
-		{
-			GD.Print("Error: Cannot end combat due to nullptr.");
-			return;
-		}
-
-		_playerManager.Get().SetIsInCombat(false);
-		_boardManager.SetHighlightTilesEnabled(false);
+		_playerManager.Get().SetIsInCombat(value);
+		_boardManager.SetHighlightTilesEnabled(value);
 	}
 
 	private void OnLevelChanged()
@@ -156,7 +144,10 @@ public partial class Main : Node2D
 		GD.Print("Debug[Main:OnLevelChanged]: Set player cell to ", _playerManager.Get().GetCell());
 		GD.Print("Debug[Main:OnLevelChanged]: Added player to board at ", level.GetPlayerStart());
 
-		if (level.GetEnemyTiles().Count > 0) { StartCombat(); }
-		else { EndCombat(); }
+		// Subscribe all movable actors to the board's MoveStarted and MoveFinished signals.
+		// TBD.
+
+		// Enter combat if there are enemies in this level.
+		SetCombatEnabled(level.GetEnemyTiles().Count > 0);
 	}
 }
