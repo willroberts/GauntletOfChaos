@@ -145,9 +145,17 @@ public partial class Main : Node2D
 		GD.Print("Debug[Main:OnLevelChanged]: Added player to board at ", level.GetPlayerStart());
 
 		// Subscribe all movable actors to the board's MoveStarted and MoveFinished signals.
+		// TODO: Use a signal bus to avoid accessing each individual unit.
 		// TBD.
 
 		// Enter combat if there are enemies in this level.
 		SetCombatEnabled(level.GetEnemyTiles().Count > 0);
+	}
+
+	private async void OnMoveStarted(Vector2I newCell)
+	{
+		// Stand by until animation is complete.
+		// TODO: Use a signal bus to avoid accessing each individual unit.
+		//await ToSignal(this, "AnimationFinished");
 	}
 }

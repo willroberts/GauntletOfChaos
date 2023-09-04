@@ -3,6 +3,9 @@ using Godot.Collections;
 
 public partial class Unit : Occupant
 {
+	[Signal]
+	public delegate void AnimationFinishedEventHandler();
+
 	private readonly Grid _grid = ResourceLoader.Load("res://Resources/Grid.tres") as Grid;
 	private PathFollow2D _pathFollower = new();
 	private Curve2D _curve = new();
@@ -47,9 +50,13 @@ public partial class Unit : Occupant
 			// Disable ticking until animation starts again.
 			SetProcess(false);
 
+			// Reset components.
 			_pathFollower.Progress = 0.0F;
 			Position = _grid.GridToScreen(GetCell());
 			_curve.ClearPoints();
+
+			// Signal the completion of the animation.
+			EmitSignal("AnimationFinished");
 		}
 	}
 }
